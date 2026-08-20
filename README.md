@@ -1,32 +1,36 @@
 # NEXUS / SGRSI
 
-Sistema de Gestión de Recursos y Servicios de Informática del ITI CEPT. Permite pedir recursos, coordinar servicios, atender soporte, mantener inventario y organizar el trabajo técnico-administrativo.
+Sistema de Gestión de Recursos y Servicios de Informática del ITI CEPT.
 
-## Requisitos
+Este repositorio tiene dos carpetas:
+
+- `proyecto 1ra entrega`: el contenido original de la carpeta `PROYECTO` (primera entrega, sin cambios).
+- `proyecto 2da entrega`: código actual (HTML/CSS/JS, API PHP, `database.sql` y `config.example.php`).
+
+## Requisitos (2da entrega)
 
 - XAMPP (Apache + PHP + MySQL/MariaDB)
 - PHP 8.0 o superior
 - MySQL o MariaDB
 
-## Instalación
+## Instalación de la 2da entrega
 
-1. Clonar el repositorio dentro de `htdocs` de XAMPP:
+1. Clonar el repositorio:
 
    ```bash
    cd C:\xampp\htdocs
-   git clone https://github.com/pablo123231/NEXUS.git PROYECTO
+   git clone https://github.com/pablo123231/NEXUS.git NEXUS
    ```
 
-2. Importar `database.sql` en phpMyAdmin (o por consola). Ese archivo crea la base `proyecto` y sus tablas.
+2. Importar `proyecto 2da entrega/database.sql` en phpMyAdmin (o por consola).
 
-3. Copiar la configuración de ejemplo y ajustarla:
+3. En esa misma carpeta, copiar la configuración:
 
    ```bash
+   cd NEXUS\proyecto 2da entrega
    copy config.example.php config.php
    ```
 
-   En `config.php` revisá host, puerto, nombre de la base, usuario y contraseña. En XAMPP el puerto suele ser `3306`.
+4. Iniciar Apache y MySQL en XAMPP.
 
-4. Iniciar Apache y MySQL en el panel de XAMPP.
-
-5. Abrir `http://localhost/PROYECTO/` en el navegador.
+5. Abrir `http://localhost/NEXUS/proyecto%202da%20entrega/`
