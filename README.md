@@ -1,62 +1,32 @@
-# SGRSI
+# NEXUS / SGRSI
 
-## Descripción
+Sistema de Gestión de Recursos y Servicios de Informática del ITI CEPT. Permite pedir recursos, coordinar servicios, atender soporte, mantener inventario y organizar el trabajo técnico-administrativo.
 
-SGRSI es un portal web de gestión de recursos y servicios de tecnología de la información. La interfaz reúne el inventario institucional, la atención de solicitudes, los préstamos de equipamiento, las incidencias técnicas y la organización del trabajo técnico-administrativo.
+## Requisitos
 
-## Funcionalidad
+- XAMPP (Apache + PHP + MySQL/MariaDB)
+- PHP 8.0 o superior
+- MySQL o MariaDB
 
-- Página pública de presentación, registro e inicio de sesión.
-- Gestión de usuarios, sesiones, perfiles y permisos según rol.
-- Panel principal con acceso a los módulos habilitados para cada usuario.
-- Inventario organizado por secciones, equipos, imágenes e historial de cambios.
-- Registro y seguimiento de préstamos de recursos.
-- Registro y seguimiento de solicitudes de servicio e incidencias técnicas.
-- Planilla técnico-administrativa con tareas, estados y calendario.
-- Edición de datos de cuenta y fotografía de perfil.
-- Interfaz en español e inglés, con temas claro y oscuro.
-- Persistencia local de los datos y preferencias de sesión en el navegador.
+## Instalación
 
-## Tecnologías utilizadas
+1. Clonar el repositorio dentro de `htdocs` de XAMPP:
 
-- HTML5.
-- CSS3.
-- JavaScript sin frameworks.
-- Web Storage API mediante `localStorage` y `sessionStorage`.
-- Lucide Icons para la iconografía de la interfaz.
-- Recursos gráficos en JPEG y SVG embebido.
+   ```bash
+   cd C:\xampp\htdocs
+   git clone https://github.com/pablo123231/NEXUS.git PROYECTO
+   ```
 
-## Estructura del proyecto
+2. Importar `database.sql` en phpMyAdmin (o por consola). Ese archivo crea la base `proyecto` y sus tablas.
 
-```text
-.
-├── README.md
-└── PROYECTO/
-    ├── css/
-    │   └── global.css
-    ├── images/
-    │   └── header.jpeg
-    ├── js/
-    │   ├── app.js
-    │   ├── componentes.js
-    │   ├── datos.js
-    │   └── traducciones.js
-    ├── index.html
-    ├── login.html
-    ├── register.html
-    ├── home.html
-    ├── cuenta.html
-    ├── inventario.html
-    ├── equipos.html
-    ├── equipo-detalle.html
-    ├── secciones.html
-    ├── seccion-detalle.html
-    ├── imagenes.html
-    ├── prestamos.html
-    ├── solicitudes.html
-    ├── soporte.html
-    ├── historial.html
-    ├── planilla-ta.html
-    ├── vacios.html
-    └── proyecto
-```
+3. Copiar la configuración de ejemplo y ajustarla:
+
+   ```bash
+   copy config.example.php config.php
+   ```
+
+   En `config.php` revisá host, puerto, nombre de la base, usuario y contraseña. En XAMPP el puerto suele ser `3306`.
+
+4. Iniciar Apache y MySQL en el panel de XAMPP.
+
+5. Abrir `http://localhost/PROYECTO/` en el navegador.
