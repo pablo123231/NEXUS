@@ -217,7 +217,9 @@ function usuarioEsPersonalDelPlantel(usuario) {
 }
 
 async function obtenerPersonalDelPlantel() {
-  const usuarios = await obtenerUsuariosRegistrados();
+  // Esta consulta está habilitada para técnicos y administradores y devuelve
+  // exclusivamente el plantel que puede participar en tareas/planillas.
+  const usuarios = await obtenerResponsablesTareaRegistrados();
   const personal = [];
   for (let i = 0; i < usuarios.length; i++) {
     if (usuarioEsPersonalDelPlantel(usuarios[i])) {
