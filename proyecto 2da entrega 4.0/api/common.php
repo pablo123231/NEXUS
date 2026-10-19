@@ -111,6 +111,8 @@ function autorizarEndpoint(string $recurso): ?array {
         $usuario = exigirRol($gestion);
     } elseif (in_array($recurso, ['equipos', 'ubicaciones', 'tareas'], true) && $metodo !== 'GET') {
         $usuario = exigirRol($gestion);
+    } elseif (in_array($recurso, ['incidencias', 'prestamos', 'servicios'], true) && $metodo === 'POST') {
+        $usuario = exigirRol(['Solicitante', 'Administrador']);
     } elseif (in_array($recurso, ['incidencias', 'prestamos', 'servicios'], true)
         && in_array($metodo, ['PUT', 'PATCH', 'DELETE'], true)) {
         $usuario = exigirRol($gestion);
