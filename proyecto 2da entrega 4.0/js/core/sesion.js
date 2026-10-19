@@ -29,6 +29,9 @@ function terminarIngreso(sesion, recordarme) {
   if (!usuarioEncontrado) {
     return { ok: false, mensaje: 'No encontramos los datos de la cuenta.' };
   }
+  // El contrato 4.0 entrega el token fuera del objeto usuario. Se conserva junto a
+  // la copia local para que todas las escrituras posteriores puedan enviarlo.
+  usuarioEncontrado.csrfToken = sesion.csrf || '';
   guardarUsuarioActual(usuarioEncontrado, { persistir: recordarme });
   guardarUltimoAccesoParaAviso(sesion.ultimoAcceso || null);
   return {
@@ -133,11 +136,20 @@ async function verificarSesionEnServidor() {
       return;
     }
     const local = obtenerUsuarioActual();
+    estado.usuario.csrfToken = estado.csrf || (local && local.csrfToken) || '';
     if (!local || local.cedula !== estado.usuario.cedula || local.rol !== estado.usuario.rol) {
       guardarUsuarioActual(estado.usuario, {
         persistir: !!leerStorage(CLAVES_STORAGE.recordarSesion, false),
       });
       window.location.reload();
+      return;
+    }
+    // La rotacion o recuperacion de la sesion puede renovar el token sin cambiar
+    // la identidad. Actualizarlo evita que la interfaz siga enviando uno vencido.
+    if (estado.usuario.csrfToken && local.csrfToken !== estado.usuario.csrfToken) {
+      guardarUsuarioActual(estado.usuario, {
+        persistir: !!leerStorage(CLAVES_STORAGE.recordarSesion, false),
+      });
     }
   } catch (error) {
     /* sin conexion: la API igualmente rechazara las operaciones */
@@ -166,4 +178,3 @@ async function cerrarSesion() {
   await cerrarSesionServidor();
   window.location.href = 'index.html';
 }
-

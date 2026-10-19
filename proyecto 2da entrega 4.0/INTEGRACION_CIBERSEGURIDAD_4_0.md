@@ -56,3 +56,16 @@ La entrega recibida eliminaba todos los scripts internos y podía usar `script-s
 - panel e historial de seguridad: correctos;
 - consultas autenticadas de equipos, historial, incidencias, planilla, préstamos, reportes, servicios, tareas, ubicaciones, usuarios, recuperación, sesión y seguridad: correctas;
 - prueba CRUD de ubicación (alta, modificación y baja lógica): correcta; los datos de prueba se eliminaron después.
+
+## Corrección 4.0.1 — token de operaciones
+
+Se corrigió una regresión del merge por la que el navegador descartaba el token CSRF entregado durante el login. Las lecturas funcionaban, pero las altas, modificaciones, bajas y traslados eran rechazados como sesión vencida. El token ahora se conserva con la sesión local, se sincroniza durante la comprobación de sesión y se renueva automáticamente una vez ante un rechazo CSRF. También se agregó un mensaje visible global para que los formularios operativos nunca fallen en silencio.
+
+Pruebas de regresión realizadas:
+
+- cambio de estado de un préstamo desde la interfaz y restauración de su estado original;
+- alta real de préstamo, incidencia y servicio con una cuenta solicitante;
+- respuesta HTTP 201 en las tres altas y eliminación posterior de los datos de prueba;
+- validación de sintaxis de todo el JavaScript;
+- carga HTTP correcta de las 21 páginas públicas/aplicativas;
+- actualización de versión en los scripts centrales para impedir que el navegador reutilice la copia defectuosa en caché.
