@@ -10,15 +10,12 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600&display=swap"
       rel="stylesheet"
     />
-    <link rel="stylesheet" href="css/global.css" />
+    <link rel="stylesheet" href="css/global.css?v=4.1.1" />
 </head>
   <body data-section="home" data-requires-auth="true">
     <div id="cabecera-superior"></div>
     <main class="portal-main regla-diseno-001">
       <section id="hero-home"></section>
-      <section class="panel-grid panel-grid--single regla-diseno-007" id="accesos-tecnico" hidden>
-        <article class="panel"><div class="panel__header"><div><h2 class="panel__title">Herramientas del técnico</h2><p>Accesos para atender solicitudes, incidencias, préstamos e inventario.</p></div></div><div class="panel__body"><div id="modulos-tecnico" class="module-grid regla-diseno-013"></div></div></article>
-      </section>
       <div id="mensaje-kanban"></div>
       <section class="calendar-toolbar regla-diseno-002" id="kanban-toolbar">
         <div><strong>Tablero del equipo técnico</strong><p>Organiza y asigna las tareas internas.</p></div>
@@ -226,19 +223,6 @@
           'hero-home',
           ` <section class="hero-banner regla-diseno-076"> <div class="hero-banner__copy"> <h1 class="hero-banner__title regla-diseno-078">Bienvenida, ${escaparHtml(obtenerNombreCorto(usuarioActual.nombreCompleto))}</h1> <p class="hero-banner__text regla-diseno-079" data-clave="home_hero_desc">${escaparHtml(t('SGRSI es la herramienta que busca gestionar tu trabajo diario de forma eficiente y segura'))}</p> </div> <figure class="hero-banner__media hero-banner__media--welcome regla-diseno-080" aria-hidden="true"> <img class="hero-banner__welcome-icon" src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxvZ3MtaWNvbiBsdWNpZGUtbG9ncyI+PHBhdGggZD0iTTMgNWgxIi8+PHBhdGggZD0iTTMgMTJoMSIvPjxwYXRoIGQ9Ik0zIDE5aDEiLz48cGF0aCBkPSJNOCA1aDEiLz48cGF0aCBkPSJNOCAxMmgxIi8+PHBhdGggZD0iTTggMTloMSIvPjxwYXRoIGQ9Ik0xMyA1aDgiLz48cGF0aCBkPSJNMTMgMTJoOCIvPjxwYXRoIGQ9Ik0xMyAxOWg4Ii8+PC9zdmc+" alt="" /> </figure> </section> `,
         );
-
-        if (usuarioEsTecnico(usuarioActual)) {
-          const accesosTecnico = document.getElementById('accesos-tecnico');
-          let tarjetasTecnico = '';
-          const modulosTecnico = obtenerModulosDisponiblesParaUsuario(usuarioActual).filter(function (modulo) {
-            return modulo.id !== 'cuenta';
-          });
-          for (let i = 0; i < modulosTecnico.length; i++) {
-            tarjetasTecnico += crearTarjetaDeModulo(modulosTecnico[i]);
-          }
-          mostrarEn('modulos-tecnico', tarjetasTecnico);
-          accesosTecnico.hidden = false;
-        }
 
         if (!puedeVerKanban) {
           if (seccionKanban) {

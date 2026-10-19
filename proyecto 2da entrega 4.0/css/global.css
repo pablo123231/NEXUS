@@ -117,8 +117,12 @@
   to { transform: translateY(0); opacity: 1; }
 }
 * {
-    box-sizing: border-box;
-  }
+  box-sizing: border-box;
+}
+
+[hidden] {
+  display: none !important;
+}
 
   *::before {
     box-sizing: border-box;
