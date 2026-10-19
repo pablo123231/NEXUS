@@ -1,0 +1,191 @@
+<!doctype html>
+<html lang="es" data-tema="claro" data-idioma="es">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Cuenta | Portal de Gestion TI</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Hanken+Grotesk:wght@600;700;800&family=Inter:wght@400;500;600;700&family=Inter+Tight:wght@400;500;600&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="css/global.css" />
+</head>
+  <body class="account-redesign" data-section="cuenta" data-requires-auth="true">
+    <div id="cabecera-superior"></div>
+    <main class="portal-main regla-diseno-001">
+      <p><a class="boton boton--outline" href="solicitar-rol.html">Solicitar cambio de rol</a></p>
+      <div id="cabecera-de-pagina"></div>
+      <section class="profile-layout account-profile-layout regla-diseno-007">
+        <aside id="perfil-resumen"></aside>
+        <section class="panel account-form-panel regla-diseno-032">
+          <div class="panel__header regla-diseno-009">
+            <div>
+              <h2 class="panel__title regla-diseno-010" data-clave="datos_de_tu_perfil">Datos de tu perfil</h2>
+            </div>
+          </div>
+          <div class="panel__body regla-diseno-012">
+            <div id="mensaje-cuenta"></div>
+            <form id="form-cuenta" class="auth-form regla-diseno-033">
+              <div class="input-stack regla-diseno-025">
+                  <label for="cuenta-descripcion" data-clave="descripcion_bio">DESCRIPCION</label>
+                <textarea
+                  class="textarea-input regla-diseno-026"
+                  id="cuenta-descripcion"
+                  placeholder="Describe tu perfil institucional..."
+                 data-clave-placeholder="describe_perfil"></textarea>
+              </div>
+              <div class="field-grid regla-diseno-024">
+                <div class="input-stack regla-diseno-025">
+                  <label for="cuenta-nombre" data-clave="nombre_completo">Nombre completo</label>
+                  <input
+                    class="text-input regla-diseno-026"
+                    id="cuenta-nombre"
+                    type="text"
+                    required
+                  />
+                </div>
+                <div class="input-stack regla-diseno-025">
+                  <label for="cuenta-correo" data-clave="correo">Correo</label>
+                  <input
+                    class="text-input regla-diseno-026"
+                    id="cuenta-correo"
+                    type="email"
+                    required
+                  />
+                </div>
+              </div>
+              <div class="field-grid regla-diseno-024">
+                <div class="input-stack regla-diseno-025">
+                  <label for="cuenta-fecha-registro" data-clave="fecha_registro">Fecha de registro</label>
+                  <input
+                    class="text-input regla-diseno-026"
+                    id="cuenta-fecha-registro"
+                    type="text"
+                    readonly
+                  />
+                </div>
+                <div class="input-stack regla-diseno-025">
+                  <label for="cuenta-rol" data-clave="rol">Rol</label>
+                  <input
+                    class="text-input regla-diseno-026"
+                    id="cuenta-rol"
+                    type="text"
+                    readonly
+                  />
+                </div>
+              </div>
+              <div class="field-grid regla-diseno-024">
+                <div class="input-stack regla-diseno-025">
+                  <label for="cuenta-area" data-clave="area">Area</label>
+                  <input
+                    class="text-input regla-diseno-026"
+                    id="cuenta-area"
+                    type="text"
+                    placeholder="Ej. Gestion tecnologica"
+                  data-clave-placeholder="ej_gestion_tecnologica" />
+                </div>
+                <div class="input-stack regla-diseno-025">
+                  <label for="cuenta-foto" data-clave="foto_perfil">Foto de perfil</label>
+                  <input
+                    class="text-input regla-diseno-026"
+                    id="cuenta-foto"
+                    type="file"
+                    accept="image/jpeg,image/png,image/webp"
+                  />
+                </div>
+              </div>
+              <div class="form-actions regla-diseno-035">
+                <button
+                  class="boton boton--primary regla-diseno-005"
+                  type="submit"
+                 data-clave="guardar_cambios">
+                  Guardar cambios
+                </button>
+              </div>
+            </form>
+          </div>
+        </section>
+      </section>
+      <!-- F-08 (3ra entrega): herramientas contra el phishing y el robo de cuentas -->
+      <section class="panel account-security-panel regla-diseno-032" id="panel-seguridad">
+        <div class="panel__header regla-diseno-009">
+          <div>
+            <h2 class="panel__title regla-diseno-010">Seguridad de la cuenta</h2>
+            <p class="seguridad-nota">
+              Protege tu cuenta aunque alguien consiga tu contrasena con un correo o una pagina falsa.
+            </p>
+          </div>
+        </div>
+        <div class="panel__body regla-diseno-012">
+          <div id="mensaje-seguridad"></div>
+          <div class="seguridad-grid">
+            <article class="seguridad-bloque">
+              <h3 class="seguridad-bloque__titulo">Verificacion en dos pasos</h3>
+              <div id="bloque-2fa"><p class="seguridad-nota">Cargando...</p></div>
+            </article>
+            <article class="seguridad-bloque">
+              <h3 class="seguridad-bloque__titulo">Cambiar contrasena</h3>
+              <form id="form-contrasena" class="seguridad-form">
+                <div class="input-stack regla-diseno-025">
+                  <label for="contrasena-actual">Contrasena actual</label>
+                  <input class="text-input regla-diseno-026" id="contrasena-actual" type="password" autocomplete="current-password" required />
+                </div>
+                <div class="input-stack regla-diseno-025">
+                  <label for="contrasena-nueva">Contrasena nueva</label>
+                  <input class="text-input regla-diseno-026" id="contrasena-nueva" type="password" autocomplete="new-password" minlength="8" required />
+                </div>
+                <div class="input-stack regla-diseno-025">
+                  <label for="contrasena-repetir">Repeti la contrasena nueva</label>
+                  <input class="text-input regla-diseno-026" id="contrasena-repetir" type="password" autocomplete="new-password" minlength="8" required />
+                </div>
+                <button class="boton boton--primary boton--sm" type="submit">Cambiar contrasena</button>
+              </form>
+            </article>
+            <article class="seguridad-bloque seguridad-bloque--ancho">
+              <div class="seguridad-bloque__cabecera">
+                <h3 class="seguridad-bloque__titulo">Actividad reciente</h3>
+                <button class="boton boton--outline-danger boton--sm" id="boton-cerrar-sesiones" type="button">
+                  Cerrar todas las otras sesiones
+                </button>
+              </div>
+              <p class="seguridad-nota">
+                Si ves un ingreso que no reconoces, cambia la contrasena y cerra las demas sesiones.
+              </p>
+              <div id="tabla-actividad"></div>
+            </article>
+            <article class="seguridad-bloque" id="bloque-admin-2fa" hidden>
+              <h3 class="seguridad-bloque__titulo">Restablecer verificacion de otro usuario</h3>
+              <p class="seguridad-nota">Para quien perdio el telefono. Tambien cierra sus sesiones.</p>
+              <form id="form-restablecer-2fa" class="seguridad-form">
+                <div class="input-stack regla-diseno-025">
+                  <label for="cedula-restablecer">Cedula</label>
+                  <input class="text-input regla-diseno-026" id="cedula-restablecer" type="text" inputmode="numeric" pattern="[0-9.\-]{6,15}" required />
+                </div>
+                <button class="boton boton--outline-danger boton--sm" type="submit">Restablecer</button>
+              </form>
+            </article>
+          </div>
+        </div>
+      </section>
+    </main>
+    <script src="https://unpkg.com/lucide@0.469.0/dist/umd/lucide.min.js"></script>
+    <script src="js/datos.js"></script>
+    <script src="js/componentes.js?v=responsive"></script>
+    <script src="js/traducciones.js"></script>
+    <script src="js/core/ui.js?v=modular-1"></script>
+    <script src="js/core/api.js?v=modular-1"></script>
+    <script src="js/core/portal.js?v=modular-1"></script>
+    <script src="js/modules/inventario.js?v=modular-1"></script>
+    <script src="js/modules/usuarios.js?v=modular-1"></script>
+    <script src="js/modules/tareas-planilla.js?v=modular-1"></script>
+    <script src="js/modules/operaciones.js?v=modular-1"></script>
+    <script src="js/modules/seguridad-cuenta.js"></script>
+    <script src="js/core/sesion.js?v=modular-1"></script>
+    <script src="js/app.js?v=modular-1"></script>
+    <script src="js/paginas/cuenta.js"></script>
+  </body>
+</html>
+
+
