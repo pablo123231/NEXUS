@@ -49,8 +49,10 @@
     campoCodigo.focus();
   }
 
-  function irAlInicio() {
-    window.location.href = 'home.html';
+  function irAlInicio(usuario) {
+    window.location.href = usuario && usuario.debeCambiarContrasena
+      ? 'cambiar-contrasena.html'
+      : 'home.html';
   }
 
   formLogin.addEventListener('submit', async function (evento) {
@@ -74,7 +76,7 @@
         mostrarMensaje(respuesta.mensaje, 'error');
         return;
       }
-      irAlInicio();
+      irAlInicio(respuesta.usuario);
     } catch (error) {
       manejarErrorCliente(error, mostrarMensaje);
     }
@@ -98,7 +100,7 @@
         campoCodigo.select();
         return;
       }
-      irAlInicio();
+      irAlInicio(respuesta.usuario);
     } catch (error) {
       manejarErrorCliente(error, mostrarMensajeCodigo);
     }

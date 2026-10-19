@@ -100,7 +100,8 @@ function autorizarEndpoint(string $recurso): ?array {
     $usuario = exigirSesion();
     $administrador = ['Administrador'];
     $gestion = ['Tecnico_Asistente', 'Administrador'];
-    if (in_array($recurso, ['catalogos', 'configuracion', 'solicitudes_registro'], true)
+    if ((in_array($recurso, ['catalogos', 'configuracion'], true) && $metodo !== 'GET')
+        || $recurso === 'solicitudes_registro'
         || ($recurso === 'usuarios' && in_array($metodo, ['POST', 'DELETE'], true))
         || ($recurso === 'cambios_rol' && $metodo !== 'POST')) {
         $usuario = exigirRol($administrador);
