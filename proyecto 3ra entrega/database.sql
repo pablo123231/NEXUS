@@ -197,8 +197,11 @@ CREATE TABLE `historial_equipo` (
   `descripcion` text DEFAULT NULL,
   `fecha_registrado` datetime NOT NULL DEFAULT current_timestamp(),
   `id_equipo` int(11) NOT NULL,
+  `autor_cedula` varchar(15) DEFAULT NULL,
+  `autor_nombre` varchar(170) DEFAULT NULL,
   PRIMARY KEY (`id_historial_equipo`),
   KEY `fk_histeq_equipo` (`id_equipo`),
+  KEY `idx_histeq_autor_fecha` (`autor_cedula`,`fecha_registrado`),
   CONSTRAINT `fk_histeq_equipo` FOREIGN KEY (`id_equipo`) REFERENCES `equipo` (`id_equipo`)
 ) ENGINE=InnoDB AUTO_INCREMENT=7 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -209,7 +212,7 @@ CREATE TABLE `historial_equipo` (
 
 LOCK TABLES `historial_equipo` WRITE;
 /*!40000 ALTER TABLE `historial_equipo` DISABLE KEYS */;
-INSERT INTO `historial_equipo` VALUES (1,'Alta',NULL,'2026-10-19 11:47:21',1),(2,'Alta',NULL,'2026-10-19 11:58:53',2),(3,'Traslado de equipo','Equipo \"Monitor 1\" trasladado de \"Laboratorio 1\" a \"Laboratorio 2\".','2026-10-19 11:59:19',2),(4,'Baja de equipo','Equipo \"Monitor 1\" dado de baja desde \"Laboratorio 2\".','2026-10-19 11:59:36',2),(5,'Alta',NULL,'2026-10-19 12:02:01',3),(6,'Traslado de equipo','Equipo \"Monitor 1\" trasladado de \"Laboratorio 2\" a \"Laboratorio 1\" por eliminacion de seccion.','2026-10-19 12:02:12',3);
+INSERT INTO `historial_equipo` (`id_historial_equipo`,`categoria`,`descripcion`,`fecha_registrado`,`id_equipo`,`autor_cedula`,`autor_nombre`) VALUES (1,'Alta',NULL,'2026-10-19 11:47:21',1,NULL,NULL),(2,'Alta',NULL,'2026-10-19 11:58:53',2,NULL,NULL),(3,'Traslado de equipo','Equipo \"Monitor 1\" trasladado de \"Laboratorio 1\" a \"Laboratorio 2\".','2026-10-19 11:59:19',2,NULL,NULL),(4,'Baja de equipo','Equipo \"Monitor 1\" dado de baja desde \"Laboratorio 2\".','2026-10-19 11:59:36',2,NULL,NULL),(5,'Alta',NULL,'2026-10-19 12:02:01',3,NULL,NULL),(6,'Traslado de equipo','Equipo \"Monitor 1\" trasladado de \"Laboratorio 2\" a \"Laboratorio 1\" por eliminacion de seccion.','2026-10-19 12:02:12',3,NULL,NULL);
 /*!40000 ALTER TABLE `historial_equipo` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -279,10 +282,14 @@ DROP TABLE IF EXISTS `historial_ubicacion`;
 CREATE TABLE `historial_ubicacion` (
   `id_historial_ubicacion` int(11) NOT NULL AUTO_INCREMENT,
   `fecha_registrado` datetime NOT NULL DEFAULT current_timestamp(),
+  `categoria` varchar(60) NOT NULL DEFAULT 'Cambio de seccion',
   `descripcion` text DEFAULT NULL,
   `id_ubicacion` int(11) NOT NULL,
+  `autor_cedula` varchar(15) DEFAULT NULL,
+  `autor_nombre` varchar(170) DEFAULT NULL,
   PRIMARY KEY (`id_historial_ubicacion`),
   KEY `fk_histub_ubicacion` (`id_ubicacion`),
+  KEY `idx_histub_autor_fecha` (`autor_cedula`,`fecha_registrado`),
   CONSTRAINT `fk_histub_ubicacion` FOREIGN KEY (`id_ubicacion`) REFERENCES `ubicacion` (`id_ubicacion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -293,7 +300,7 @@ CREATE TABLE `historial_ubicacion` (
 
 LOCK TABLES `historial_ubicacion` WRITE;
 /*!40000 ALTER TABLE `historial_ubicacion` DISABLE KEYS */;
-INSERT INTO `historial_ubicacion` VALUES (1,'2026-10-19 12:02:12','Seccion \"Laboratorio 2\" dada de baja. 1 equipo trasladado a \"Laboratorio 1\".',2);
+INSERT INTO `historial_ubicacion` (`id_historial_ubicacion`,`fecha_registrado`,`categoria`,`descripcion`,`id_ubicacion`,`autor_cedula`,`autor_nombre`) VALUES (1,'2026-10-19 12:02:12','Baja de seccion','Seccion \"Laboratorio 2\" dada de baja. 1 equipo trasladado a \"Laboratorio 1\".',2,NULL,NULL);
 /*!40000 ALTER TABLE `historial_ubicacion` ENABLE KEYS */;
 UNLOCK TABLES;
 

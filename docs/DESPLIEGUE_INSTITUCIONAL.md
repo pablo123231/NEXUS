@@ -20,6 +20,20 @@ La ejecución en el servidor institucional queda pendiente del acceso por LAN, s
 6. Verificar permisos del directorio de fotografías.
 7. Acceder por HTTPS y comprobar las cabeceras CSP, anti-clickjacking y no-sniff.
 
+## Acceso desde la LAN y requisito HTTPS
+
+NEXUS permite HTTP únicamente cuando el host solicitado es `localhost`, `127.0.0.1` o un dominio `.localhost`. Para cualquier IP o nombre de la LAN, `seguridad/bootstrap.php` rechaza HTTP con estado 403 y `.htaccess` intenta redirigir la solicitud a la misma dirección mediante HTTPS. Esta protección evita enviar contraseñas, cookies de sesión y códigos de segundo factor sin cifrar.
+
+Por lo tanto, copiar los archivos y la base de datos no completa el despliegue. El servidor o un proxy institucional debe publicar el sitio por el puerto 443 con un certificado confiable para el nombre utilizado. Las alternativas, en orden recomendado, son:
+
+1. Solicitar al administrador institucional una URL HTTPS interna y que configure el certificado y el sitio virtual.
+2. Publicar NEXUS detrás del proxy HTTPS que ya utilice la institución, conservando el host original y la información de protocolo.
+3. Para una prueba temporal y aislada, usar un certificado emitido por la autoridad interna de la institución e instalar esa autoridad en los equipos de prueba.
+
+No se recomienda desactivar la exigencia HTTPS en producción. Si la infraestructura utiliza un proxy, debe acordarse explícitamente qué cabecera informa el protocolo original y qué direcciones de proxy son confiables; NEXUS no debe confiar indiscriminadamente en cabeceras enviadas por cualquier cliente.
+
+Antes de la próxima prueba, confirmar con infraestructura: nombre DNS, puerto, certificado, raíz pública del proyecto, versión de PHP, extensiones PDO/MySQL, ubicación de `config.php`, permisos de `seguridad/almacen` y si existe proxy inverso. Luego probar la URL HTTPS desde otra estación de la LAN.
+
 ## Smoke test pendiente en LAN
 
 - Inicio y cierre de sesión de administrador, técnico y solicitante.
