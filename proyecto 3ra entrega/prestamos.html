@@ -109,7 +109,7 @@
     </main>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="js/datos.js"></script>
-    <script src="js/componentes.js?v=4.1.0"></script>
+    <script src="js/componentes.js?v=4.2.4"></script>
     <script src="js/traducciones.js"></script>
     <script src="js/core/ui.js?v=modular-1"></script>
     <script src="js/core/api.js?v=4.1.0"></script>
@@ -150,7 +150,7 @@
         const puedeSolicitar = usuarioPuedeSolicitar(usuarioActual);
         const puedeGestionar = usuarioPuedeGestionarOperaciones(usuarioActual);
         let equiposPrestamoDisponibles = [];
-        const opcionesEstadoPrestamo = [
+        const opcionesPendientePrestamo = [
           {
             estado: 'Aprobado',
             etiqueta: 'Aprobar',
@@ -159,16 +159,18 @@
             atributoEstado: 'data-prestamo-status',
           },
           {
-            estado: 'Pendiente',
-            etiqueta: 'Marcar pendiente',
-            clase: 'boton--outline',
-            atributoId: 'data-update-prestamo',
-            atributoEstado: 'data-prestamo-status',
-          },
-          {
             estado: 'Denegado',
             etiqueta: 'Denegar',
             clase: 'boton--outline-danger',
+            atributoId: 'data-update-prestamo',
+            atributoEstado: 'data-prestamo-status',
+          },
+        ];
+        const opcionesAprobadoPrestamo = [
+          {
+            estado: 'Devuelto',
+            etiqueta: 'Marcar como devuelto',
+            clase: 'boton--primary',
             atributoId: 'data-update-prestamo',
             atributoEstado: 'data-prestamo-status',
           },
@@ -252,11 +254,13 @@
             const recurso = recursos[i];
             const id = 'prestamo-recurso-' + i;
             const disponible = Number(recurso.cantidadDisponible);
+            const total = Number(recurso.cantidad);
+            const reservado = Math.max(total - disponible, 0);
             if (recurso.estado !== 'Activo' || disponible < 1) {
-              html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" disabled /> <span>${escaparHtml(recurso.nombre)}</span> </label> <div class="loan-resource-option__qty regla-diseno-015"><span>Cantidad</span><strong>No hay equipos disponibles</strong></div> </div> `;
+              html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" disabled /> <span>${escaparHtml(recurso.nombre)}</span> </label> <div class="loan-resource-option__qty regla-diseno-015"><span>Total: ${escaparHtml(total)} · Reservados: ${escaparHtml(reservado)}</span><strong>No hay equipos disponibles</strong></div> </div> `;
               continue;
             }
-            html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" value="${escaparHtml(recurso.nombre)}" data-equipo-id="${escaparHtml(recurso.id)}" data-loan-resource /> <span>${escaparHtml(recurso.nombre)}</span> </label> <label class="loan-resource-option__qty regla-diseno-015"> <span>Cantidad (disponibles: ${escaparHtml(disponible)})</span> <input class="text-input regla-diseno-026" type="number" min="1" max="${escaparHtml(disponible)}" placeholder="0" disabled data-loan-quantity aria-label="Cantidad de ${escaparHtml(recurso.nombre)}" /> </label> </div> `;
+            html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" value="${escaparHtml(recurso.nombre)}" data-equipo-id="${escaparHtml(recurso.id)}" data-loan-resource /> <span>${escaparHtml(recurso.nombre)}</span> </label> <label class="loan-resource-option__qty regla-diseno-015"> <span>Total: ${escaparHtml(total)} · Reservados: ${escaparHtml(reservado)} · Disponibles: ${escaparHtml(disponible)}</span> <input class="text-input regla-diseno-026" type="number" min="1" max="${escaparHtml(disponible)}" placeholder="0" disabled data-loan-quantity aria-label="Cantidad de ${escaparHtml(recurso.nombre)}" /> </label> </div> `;
           }
           contenedorRecursos.innerHTML = html;
         }
@@ -362,9 +366,15 @@
             for (let i = 0; i < prestamos.length; i++) {
               let acciones = '';
               if (puedeGestionar) {
-                acciones = crearBotonesCambioEstado(prestamos[i], opcionesEstadoPrestamo);
+                if (prestamos[i].estado === 'Pendiente') {
+                  acciones = crearBotonesCambioEstado(prestamos[i], opcionesPendientePrestamo);
+                } else if (prestamos[i].estado === 'Aprobado') {
+                  acciones = crearBotonesCambioEstado(prestamos[i], opcionesAprobadoPrestamo);
+                }
                 if (prestamos[i].estado === 'Aprobado' || prestamos[i].estado === 'Denegado' || prestamos[i].estado === 'Devuelto') {
-                  acciones += '<label class="input-stack"><span>Comentario asociado</span><textarea class="textarea-input" data-comentario-prestamo="' + escaparHtml(prestamos[i].id) + '" placeholder="Escribi un comentario sobre el prestamo">' + escaparHtml(prestamos[i].comentarioResolucion || '') + '</textarea></label><button class="boton boton--outline boton--sm" data-guardar-comentario-prestamo="' + escaparHtml(prestamos[i].id) + '">Guardar comentario</button>';
+                  if (!prestamos[i].comentarioResolucion) {
+                    acciones += '<label class="input-stack"><span>Comentario asociado</span><textarea class="textarea-input" data-comentario-prestamo="' + escaparHtml(prestamos[i].id) + '" placeholder="Escribi un comentario sobre el prestamo"></textarea></label><button class="boton boton--outline boton--sm" data-guardar-comentario-prestamo="' + escaparHtml(prestamos[i].id) + '">Guardar comentario</button>';
+                  }
                 }
                 acciones += '<button class="boton boton--outline-danger boton--sm" data-baja-prestamo="' + escaparHtml(prestamos[i].id) + '">Dar de baja</button>';
               }
@@ -388,6 +398,8 @@
           const botonBaja = evento.target.closest('[data-baja-prestamo]');
           if (botonBaja && puedeGestionar) {
             await darDeBajaOperacion('api/prestamos.php', botonBaja.getAttribute('data-baja-prestamo'));
+            await renderCategorias();
+            renderRecursosPorCategoria();
             await renderListaPrestamos(); return;
           }
           const botonGestion = evento.target.closest('[data-update-prestamo]');
@@ -398,6 +410,8 @@
             botonGestion.getAttribute('data-update-prestamo'),
             botonGestion.getAttribute('data-prestamo-status'),
           );
+          await renderCategorias();
+          renderRecursosPorCategoria();
           await renderFiltrosPrestamos();
           await renderListaPrestamos();
           dibujarIconos();

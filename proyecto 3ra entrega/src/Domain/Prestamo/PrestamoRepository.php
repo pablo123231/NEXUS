@@ -7,7 +7,7 @@ interface PrestamoRepository
     public function listar(Cedula $usuario,bool $gestiona):array;
     public function diasMaximos():int;
     public function crear(array $datos,Cedula $usuario):array;
-    public function baja(int $id):bool;
-    public function comentar(int $id,string $comentario):bool;
-    public function cambiarEstado(int $id,string $estado):bool;
+    public function baja(int $id,Cedula $responsable):bool;
+    public function comentar(int $id,string $comentario,Cedula $responsable):bool;
+    public function cambiarEstado(int $id,string $estado,Cedula $responsable,string $observacion=''):bool;
 }

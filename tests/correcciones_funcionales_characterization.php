@@ -29,6 +29,13 @@ verificarCorreccion(!str_contains($detalle,'editar-equipo-cantidad'),'La edicion
 
 $prestamos=contenido($raiz.'prestamos.html');
 verificarCorreccion(str_contains($prestamos,"tipo=categoria_tecnologica"),'Prestamos no usa el catalogo compartido.');
+verificarCorreccion(str_contains($prestamos,'Marcar como devuelto'),'Prestamos no ofrece la devolucion de un prestamo aprobado.');
+verificarCorreccion(!str_contains($prestamos,'Marcar pendiente'),'Prestamos conserva una transicion regresiva a pendiente.');
+verificarCorreccion(str_contains($prestamos,'cantidadReservada')||str_contains($prestamos,'Reservados:'),'Prestamos no informa cantidades reservadas y disponibles.');
+verificarCorreccion(str_contains($prestamos,'!prestamos[i].comentarioResolucion'),'El comentario de prestamo guardado sigue siendo editable.');
+$prestamoRepo=contenido($raiz.'src/Infrastructure/Persistence/PdoPrestamoRepository.php');
+verificarCorreccion(str_contains($prestamoRepo,'fecha_devolucion_real'),'La devolucion no registra su fecha real.');
+verificarCorreccion(str_contains($prestamoRepo,"'Solicitado'=>['Activo','Cancelado']"),'El backend no define transiciones validas de prestamo.');
 
 $administracion=contenido($raiz.'administracion.html');
 verificarCorreccion(str_contains($administracion,'data-reactivar'),'Administracion no permite reactivar catalogos.');

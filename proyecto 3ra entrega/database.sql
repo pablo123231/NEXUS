@@ -387,6 +387,7 @@ CREATE TABLE `prestamo` (
   `estado` enum('Solicitado','Activo','Devuelto','Cancelado') NOT NULL DEFAULT 'Solicitado',
   `fecha_solicitado` date NOT NULL,
   `fecha_devolucion` date NOT NULL,
+  `fecha_devolucion_real` datetime DEFAULT NULL,
   `recursos_solicitados` varchar(255) DEFAULT NULL,
   `jornada` varchar(30) DEFAULT NULL,
   `lugar_entrega` varchar(100) DEFAULT NULL,
@@ -413,7 +414,7 @@ CREATE TABLE `prestamo` (
 
 LOCK TABLES `prestamo` WRITE;
 /*!40000 ALTER TABLE `prestamo` DISABLE KEYS */;
-INSERT INTO `prestamo` VALUES (1,'all-in-one','Solicitado','2026-10-19','2026-10-19','1 PC 1','Mañana','Laboratorio 1','Para dar una clase de programación','bien','57324099',1,1);
+INSERT INTO `prestamo` (`id_prestamo`,`categoria`,`estado`,`fecha_solicitado`,`fecha_devolucion`,`fecha_devolucion_real`,`recursos_solicitados`,`jornada`,`lugar_entrega`,`descripcion`,`comentario_resolucion`,`cedula`,`id_equipo`,`esta_activo`) VALUES (1,'all-in-one','Solicitado','2026-10-19','2026-10-19',NULL,'1 PC 1','Mañana','Laboratorio 1','Para dar una clase de programación','bien','57324099',1,1);
 /*!40000 ALTER TABLE `prestamo` ENABLE KEYS */;
 UNLOCK TABLES;
 
