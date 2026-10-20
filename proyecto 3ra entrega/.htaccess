@@ -7,9 +7,8 @@ ServerSignature Off
 
 <IfModule mod_rewrite.c>
     RewriteEngine On
-    RewriteCond %{HTTPS} off
-    RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1|\[::1\])(:\d+)?$ [NC]
-    RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [R=301,L]
+    # El control de transporte se realiza en seguridad/bootstrap.php, que puede
+    # distinguir una LAN privada de Internet sin forzar un puerto 443 inexistente.
     RewriteRule ^seguridad(/|$) - [F,L]
     RewriteCond %{REQUEST_METHOD} !^(GET|HEAD|POST|PUT|PATCH|DELETE|OPTIONS)$
     RewriteRule ^ - [R=405,L]

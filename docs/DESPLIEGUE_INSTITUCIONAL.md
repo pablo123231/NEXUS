@@ -7,7 +7,7 @@ La ejecución en el servidor institucional queda pendiente del acceso por LAN, s
 - Apache 2.4 con `mod_rewrite` y cabeceras habilitadas.
 - PHP 8.0 o superior con PDO MySQL, GD, mbstring y fileinfo.
 - MariaDB 10.4 o MySQL compatible.
-- HTTPS en el entorno institucional.
+- Red LAN privada; HTTPS es recomendable, pero no obligatorio para este despliegue cerrado.
 - Directorio `uploads/perfiles` escribible por el proceso web y no ejecutable.
 
 ## Instalación
@@ -18,21 +18,17 @@ La ejecución en el servidor institucional queda pendiente del acceso por LAN, s
 4. Copiar `config.example.php` como `config.php` y completar conexión local del servidor.
 5. Comprobar que `config.php` no sea servido ni versionado.
 6. Verificar permisos del directorio de fotografías.
-7. Acceder por HTTPS y comprobar las cabeceras CSP, anti-clickjacking y no-sniff.
+7. Acceder desde otra máquina de la LAN mediante la IP o nombre interno y comprobar las cabeceras CSP, anti-clickjacking y no-sniff.
 
-## Acceso desde la LAN y requisito HTTPS
+## Acceso HTTP dentro de la LAN
 
-NEXUS permite HTTP únicamente cuando el host solicitado es `localhost`, `127.0.0.1` o un dominio `.localhost`. Para cualquier IP o nombre de la LAN, `seguridad/bootstrap.php` rechaza HTTP con estado 403 y `.htaccess` intenta redirigir la solicitud a la misma dirección mediante HTTPS. Esta protección evita enviar contraseñas, cookies de sesión y códigos de segundo factor sin cifrar.
+NEXUS admite HTTP cuando las direcciones observadas directamente por PHP para el cliente (`REMOTE_ADDR`) y el servidor (`SERVER_ADDR`) pertenecen a rangos privados: `10/8`, `172.16/12`, `192.168/16`, enlace local o IPv6 privada. También conserva el acceso local por `localhost`.
 
-Por lo tanto, copiar los archivos y la base de datos no completa el despliegue. El servidor o un proxy institucional debe publicar el sitio por el puerto 443 con un certificado confiable para el nombre utilizado. Las alternativas, en orden recomendado, son:
+No se confía en `X-Forwarded-For` para habilitar esta modalidad. Una conexión que tenga cualquiera de sus extremos fuera de los rangos privados continúa necesitando HTTPS y recibe estado 403. `.htaccess` ya no fuerza una redirección a un puerto 443 que puede no existir; la decisión se realiza en PHP con las direcciones reales de la conexión.
 
-1. Solicitar al administrador institucional una URL HTTPS interna y que configure el certificado y el sitio virtual.
-2. Publicar NEXUS detrás del proxy HTTPS que ya utilice la institución, conservando el host original y la información de protocolo.
-3. Para una prueba temporal y aislada, usar un certificado emitido por la autoridad interna de la institución e instalar esa autoridad en los equipos de prueba.
+Esto permite desplegar los archivos y la base sin solicitar cambios en Apache. Debe accederse desde otra estación mediante una dirección como `http://192.168.x.x/ruta-del-proyecto/`.
 
-No se recomienda desactivar la exigencia HTTPS en producción. Si la infraestructura utiliza un proxy, debe acordarse explícitamente qué cabecera informa el protocolo original y qué direcciones de proxy son confiables; NEXUS no debe confiar indiscriminadamente en cabeceras enviadas por cualquier cliente.
-
-Antes de la próxima prueba, confirmar con infraestructura: nombre DNS, puerto, certificado, raíz pública del proyecto, versión de PHP, extensiones PDO/MySQL, ubicación de `config.php`, permisos de `seguridad/almacen` y si existe proxy inverso. Luego probar la URL HTTPS desde otra estación de la LAN.
+HTTP no cifra contraseñas, cookies ni códigos de segundo factor. La excepción solo es aceptable bajo el alcance declarado: servidor sin exposición exterior y clientes dentro de la LAN institucional. Si posteriormente el sistema se publica fuera de esa red, deberá utilizarse HTTPS antes de habilitar el acceso.
 
 ## Smoke test pendiente en LAN
 
@@ -41,7 +37,7 @@ Antes de la próxima prueba, confirmar con infraestructura: nombre DNS, puerto, 
 - Alta y resolución de incidencia, servicio y préstamo.
 - Recuperación de contraseña y primer acceso con credencial temporal.
 - Alta, edición, traslado y baja lógica de equipo.
-- Movimiento Kanban hacia `En revision` y edición de dificultad.
+- Movimiento Kanban hacia `En revision` y edición de prioridad.
 - Consulta conjunta de planillas por técnico.
 - Carga de fotografía JPG/PNG y rechazo de contenido inválido.
 - Confirmación de que un técnico no ve acciones reservadas a solicitante o administrador.

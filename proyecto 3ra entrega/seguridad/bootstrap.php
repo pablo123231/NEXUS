@@ -101,6 +101,45 @@ function segEsLocal(): bool {
     return in_array($host, ['localhost', '127.0.0.1', '::1', '[::1]'], true) || str_ends_with($host, '.localhost');
 }
 
+function segEsIpPrivada(string $ip): bool {
+    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV4) !== false) {
+        $valor = (int) sprintf('%u', ip2long($ip));
+        $rangos = [
+            [ip2long('10.0.0.0'), ip2long('10.255.255.255')],
+            [ip2long('172.16.0.0'), ip2long('172.31.255.255')],
+            [ip2long('192.168.0.0'), ip2long('192.168.255.255')],
+            [ip2long('127.0.0.0'), ip2long('127.255.255.255')],
+            [ip2long('169.254.0.0'), ip2long('169.254.255.255')],
+        ];
+        foreach ($rangos as [$inicio, $fin]) {
+            if ($valor >= (int) sprintf('%u', $inicio) && $valor <= (int) sprintf('%u', $fin)) {
+                return true;
+            }
+        }
+        return false;
+    }
+    if (filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) === false) {
+        return false;
+    }
+    $binaria = inet_pton($ip);
+    if ($binaria === false) {
+        return false;
+    }
+    $primero = ord($binaria[0]);
+    $segundo = ord($binaria[1]);
+    return ($primero & 0xfe) === 0xfc
+        || ($primero === 0xfe && ($segundo & 0xc0) === 0x80)
+        || $ip === '::1';
+}
+
+function segEsLanPrivada(): bool {
+    // Se usan exclusivamente las direcciones observadas por el servidor. No se confía
+    // en X-Forwarded-For, que un cliente podría falsificar para habilitar HTTP.
+    $cliente = (string) ($_SERVER['REMOTE_ADDR'] ?? '');
+    $servidor = (string) ($_SERVER['SERVER_ADDR'] ?? '');
+    return segEsIpPrivada($cliente) && segEsIpPrivada($servidor);
+}
+
 function segAgente(): string {
     return substr((string) ($_SERVER['HTTP_USER_AGENT'] ?? ''), 0, 255);
 }
@@ -144,9 +183,10 @@ function segEncabezados(): void {
 }
 
 function segExigirHttps(): void {
-    // En localhost se permite HTTP para desarrollar; en cualquier otro host se rechaza.
-    if (!segEsHttps() && !segEsLocal()) {
-        segFalla('Conexion no segura: el sistema solo acepta HTTPS.', 403);
+    // El despliegue institucional es exclusivamente interno: HTTP se admite cuando
+    // ambos extremos pertenecen a rangos privados. Internet continúa exigiendo HTTPS.
+    if (!segEsHttps() && !segEsLocal() && !segEsLanPrivada()) {
+        segFalla('Conexion no segura: HTTP solo esta permitido dentro de la red LAN privada.', 403);
     }
 }
 
