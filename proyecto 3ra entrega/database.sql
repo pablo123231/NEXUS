@@ -775,7 +775,7 @@ CREATE TABLE `tareas` (
   `descripcion_tarea` text DEFAULT NULL,
   `plazo_tarea` date DEFAULT NULL,
   `categoria_tarea` varchar(60) DEFAULT NULL,
-  `dificultad_tarea` enum('Baja','Media','Alta') NOT NULL DEFAULT 'Media',
+  `dificultad_tarea` enum('Baja','Media','Alta','Critica') NOT NULL DEFAULT 'Media',
   `estado_tarea` enum('Pendiente','En curso','En revision','Completada') NOT NULL DEFAULT 'Pendiente',
   `color_tarea` char(7) DEFAULT NULL,
   `fecha_agregada` date NOT NULL,

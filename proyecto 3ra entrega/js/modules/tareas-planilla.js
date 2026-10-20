@@ -80,9 +80,9 @@ function crearDatosTareaCalendario(datos, tareaExistente) {
     id: base.id || generarId('TAR'),
     titulo: String(datos.titulo || base.titulo || 'Nueva tarea').trim(),
     descripcion: String(tieneDescripcion ? datos.descripcion : base.descripcion || '').trim(),
-    dificultad: normalizarValorPermitido(
-      datos.dificultad || base.dificultad,
-      dificultadesTareaTA,
+    prioridad: normalizarValorPermitido(
+      datos.prioridad || datos.dificultad || base.prioridad || base.dificultad,
+      prioridadesTareaTA,
       'Media',
     ),
     categoria: normalizarValorPermitido(

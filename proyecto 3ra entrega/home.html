@@ -107,10 +107,10 @@
                 ></select>
               </div>
               <div class="input-stack regla-diseno-025">
-                <label for="tarea-dificultad" data-clave="dificultad">Dificultad</label>
+                <label for="tarea-prioridad" data-clave="prioridad">Prioridad</label>
                 <select
                   class="select-input regla-diseno-026"
-                  id="tarea-dificultad"
+                  id="tarea-prioridad"
                   required
                 ></select>
               </div>
@@ -195,15 +195,15 @@
       </div>
     </div>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
-    <script src="js/datos.js"></script>
-    <script src="js/componentes.js?v=4.1.0"></script>
-    <script src="js/traducciones.js"></script>
+    <script src="js/datos.js?v=4.2.3"></script>
+    <script src="js/componentes.js?v=4.2.3"></script>
+    <script src="js/traducciones.js?v=4.2.3"></script>
     <script src="js/core/ui.js?v=4.2.2"></script>
     <script src="js/core/api.js?v=4.1.0"></script>
     <script src="js/core/portal.js?v=4.2.2"></script>
     <script src="js/modules/inventario.js?v=modular-1"></script>
     <script src="js/modules/usuarios.js?v=modular-1"></script>
-    <script src="js/modules/tareas-planilla.js?v=4.1.0"></script>
+    <script src="js/modules/tareas-planilla.js?v=4.2.3"></script>
     <script src="js/modules/operaciones.js?v=4.1.0"></script>
     <script src="js/core/sesion.js?v=4.0.1"></script>
     <script src="js/app.js?v=modular-1"></script>
@@ -249,7 +249,7 @@
               const selected = lista[i] === seleccionado ? ' selected' : '';
               html +=
                 '<option value="' +
-                escaparHtml(lista[i]) +
+                escaparHtml(t(lista[i])) +
                 '"' +
                 selected +
                 '>' +
@@ -326,7 +326,7 @@
             const resultado = await actualizarTareaCalendarioTA(tareaId, {
               titulo: tarea.titulo,
               descripcion: tarea.descripcion,
-              dificultad: tarea.dificultad,
+              prioridad: tarea.prioridad,
               categoria: tarea.categoria,
               estado: estadoDestino,
               fechaAgregada: tarea.fechaAgregada,
@@ -347,7 +347,7 @@
               id: '',
               titulo: '',
               descripcion: '',
-              dificultad: 'Media',
+              prioridad: 'Media',
               categoria: 'Hardware',
               estado: 'Pendiente',
               fechaAgregada: hoy,
@@ -378,9 +378,9 @@
               categoriasTareaTA,
               tareaFormulario.categoria,
             );
-            document.getElementById('tarea-dificultad').innerHTML = opcionesHtml(
-              dificultadesTareaTA,
-              tareaFormulario.dificultad,
+            document.getElementById('tarea-prioridad').innerHTML = opcionesHtml(
+              prioridadesTareaTA,
+              tareaFormulario.prioridad,
             );
             const selectResponsable = document.getElementById('tarea-tecnico');
             selectResponsable.innerHTML = opcionesResponsablesTareaHtml(
@@ -406,7 +406,7 @@
             return {
               titulo: document.getElementById('tarea-titulo').value,
               descripcion: document.getElementById('tarea-descripcion').value,
-              dificultad: document.getElementById('tarea-dificultad').value,
+              prioridad: document.getElementById('tarea-prioridad').value,
               categoria: document.getElementById('tarea-categoria').value,
               estado: document.getElementById('tarea-estado').value,
               fechaAgregada: document.getElementById('tarea-fecha-agregada').value,

@@ -216,7 +216,7 @@ const categoriasTareaTA = [
   'Mantenimiento',
   'Otro',
 ];
-const dificultadesTareaTA = ['Baja', 'Media', 'Alta', 'Critica'];
+const prioridadesTareaTA = ['Baja', 'Media', 'Alta', 'Critica'];
 
 const tareasCalendarioTASemilla = [];
 

@@ -5,7 +5,7 @@ use Nexus\Domain\Trabajo\TrabajoRepository;use Nexus\Domain\ValueObject\Cedula;u
 final class TrabajoService
 {
     private TrabajoRepository $repo;public function __construct(TrabajoRepository $r){$this->repo=$r;}
-    public function tareas():array{return array_map(function($f){$e=$f['estado_tarea']==='En proceso'?'En curso':($f['estado_tarea']==='Completada'?'Completado':$f['estado_tarea']);return ['id'=>(string)$f['id_tarea'],'titulo'=>$f['titulo_tarea'],'descripcion'=>$f['descripcion_tarea'],'categoria'=>$f['categoria_tarea']?:'Otro','estado'=>$e,'color'=>$f['color_tarea']?:'#16A34A','fechaAgregada'=>$f['fecha_agregada'],'plazoInicio'=>$f['plazo_tarea'],'plazoFin'=>$f['plazo_tarea'],'tecnicoId'=>(string)($f['tecnico_cedula']??''),'dificultad'=>$f['dificultad_tarea']?:'Media'];},$this->repo->listarTareas());}
+    public function tareas():array{return array_map(function($f){$e=$f['estado_tarea']==='En proceso'?'En curso':($f['estado_tarea']==='Completada'?'Completado':$f['estado_tarea']);return ['id'=>(string)$f['id_tarea'],'titulo'=>$f['titulo_tarea'],'descripcion'=>$f['descripcion_tarea'],'categoria'=>$f['categoria_tarea']?:'Otro','estado'=>$e,'color'=>$f['color_tarea']?:'#16A34A','fechaAgregada'=>$f['fecha_agregada'],'plazoInicio'=>$f['plazo_tarea'],'plazoFin'=>$f['plazo_tarea'],'tecnicoId'=>(string)($f['tecnico_cedula']??''),'prioridad'=>$f['dificultad_tarea']?:'Media'];},$this->repo->listarTareas());}
     public function crearTarea(array $d):int{$this->validarTarea($d);return $this->repo->crearTarea($d,$d['tecnico']);}
     public function actualizarTarea(int $id,array $d):void{$this->validarTarea($d);if(!$this->repo->actualizarTarea($id,$d,$d['tecnico']))throw new DomainException('No existe la tarea indicada.',404);}
     public function eliminarTarea(int $id):void{if(!$this->repo->eliminarTarea($id))throw new DomainException('No existe la tarea indicada.',404);}
@@ -23,7 +23,7 @@ final class TrabajoService
         $estados=['Pendiente'=>'Pendiente','En curso'=>'En curso','En proceso'=>'En curso','En revision'=>'En revision','Completado'=>'Completada','Completada'=>'Completada'];
         if(!isset($estados[$d['estado']??'']))throw new DomainException('Estado de tarea no valido.');
         $d['estado']=$estados[$d['estado']];
-        if(!in_array($d['dificultad']??'', ['Baja','Media','Alta'],true))throw new DomainException('Dificultad de tarea no valida.');
+        if(!in_array($d['prioridad']??'', ['Baja','Media','Alta','Critica'],true))throw new DomainException('Prioridad de tarea no valida.');
         if(!preg_match('/^#[0-9A-Fa-f]{6}$/',(string)($d['color']??'')))throw new DomainException('Color de tarea no valido.');
     }
 }
