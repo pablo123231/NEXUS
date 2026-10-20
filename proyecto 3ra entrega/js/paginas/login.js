@@ -22,10 +22,6 @@
     mostrarMensajeFormulario(mensajeSegundoFactor, mensaje, tipo);
   }
 
-  // F-08: la direccion real queda a la vista. Un sitio falso copia el diseno, no el dominio.
-  document.getElementById('dominio-actual').textContent =
-    window.location.protocol + '//' + window.location.host;
-
   function mostrarPasoContrasena(mensaje) {
     formSegundoFactor.hidden = true;
     formLogin.hidden = false;

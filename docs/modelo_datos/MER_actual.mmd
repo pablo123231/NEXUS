@@ -1,0 +1,67 @@
+erDiagram
+    USUARIO {
+        varchar cedula PK
+        varchar correo_electronico UK
+        enum rol
+        enum estado
+        boolean esta_activo
+    }
+    UBICACION { int id_ubicacion PK  varchar seccion_inventario  boolean esta_activa }
+    EQUIPO { int id_equipo PK  int id_ubicacion FK  varchar nombre_equipo  int cantidad_del_equipo }
+    INCIDENCIA { int id_ticket PK  int id_equipo FK  varchar cedula_crea FK  varchar cedula_responde FK  enum estado }
+    RECUPERACION_CONTRASENA { int id_recuperacion PK  int id_ticket FK  varchar cedula FK  varchar cedula_responsable FK }
+    PRESTAMO { int id_prestamo PK  varchar cedula FK  int id_equipo FK  enum estado }
+    SERVICIO { int id_servicio PK  varchar cedula FK  enum estado }
+    TAREAS { int id_tarea PK  varchar titulo_tarea  enum estado_tarea }
+    PLANTILLA_TECNICO_ASISTENTE { int id_plantilla PK  varchar cedula FK }
+    SOLICITUD_REGISTRO { int id_solicitud_registro PK  varchar id_usuario_manda FK  varchar id_usuario_responde FK }
+    SOLICITUD_CAMBIO_ROL { int id_solicitud_cambio_rol PK  varchar cedula_solicitante FK  varchar cedula_revisor FK }
+    REPORTE_ERROR { int id_reporte_error PK  varchar cedula_responsable FK  enum estado }
+    SEGURIDAD_EVENTOS { bigint id PK  varchar cedula FK  varchar tipo }
+    SEGURIDAD_INTENTOS_LOGIN { bigint id PK  varchar ip  char identificador }
+    CONFIGURACION_SISTEMA { varchar clave PK  varchar actualizado_por FK }
+    CATEGORIA_PRESTAMO { int id_categoria_prestamo PK  varchar nombre UK }
+    CATEGORIA_TECNOLOGICA { int id_categoria_tecnologica PK  varchar nombre UK }
+    SERVICIO_DISPONIBLE { int id_servicio_disponible PK  varchar nombre UK }
+    HISTORIAL_EQUIPO { int id_historial_equipo PK  int id_equipo FK }
+    HISTORIAL_PRESTAMO { int id_historial_prestamo PK  int id_prestamo FK }
+    HISTORIAL_SERVICIO { int id_historial_servicio PK  int id_servicio FK }
+    HISTORIAL_UBICACION { int id_historial_ubicacion PK  int id_ubicacion FK }
+    CONSULTA_PLANTILLA { varchar cedula_consulta PK  varchar cedula_tecnico PK }
+    CONSULTA_UBICACION { varchar cedula PK  int id_ubicacion PK }
+    REALIZA_TAREA { varchar cedula PK  int id_tarea PK }
+    SOLICITA_PRESTAMO { varchar cedula PK  int id_prestamo PK }
+    SOLICITA_SERVICIO { varchar cedula PK  int id_servicio PK }
+
+    UBICACION ||--o{ EQUIPO : contiene
+    EQUIPO ||--o{ INCIDENCIA : puede_originar
+    USUARIO ||--o{ INCIDENCIA : crea
+    USUARIO o|--o{ INCIDENCIA : responde
+    INCIDENCIA ||--o| RECUPERACION_CONTRASENA : respalda
+    USUARIO ||--o{ RECUPERACION_CONTRASENA : solicita
+    USUARIO o|--o{ RECUPERACION_CONTRASENA : resuelve
+    USUARIO ||--o{ PRESTAMO : solicita
+    EQUIPO ||--o{ PRESTAMO : integra
+    USUARIO ||--o{ SERVICIO : solicita
+    USUARIO ||--o| PLANTILLA_TECNICO_ASISTENTE : posee
+    USUARIO ||--o{ SOLICITUD_REGISTRO : envia
+    USUARIO o|--o{ SOLICITUD_REGISTRO : revisa
+    USUARIO ||--o{ SOLICITUD_CAMBIO_ROL : solicita
+    USUARIO o|--o{ SOLICITUD_CAMBIO_ROL : revisa
+    USUARIO o|--o{ REPORTE_ERROR : atiende
+    USUARIO o|--o{ SEGURIDAD_EVENTOS : genera
+    USUARIO o|--o{ CONFIGURACION_SISTEMA : actualiza
+    EQUIPO ||--o{ HISTORIAL_EQUIPO : registra
+    PRESTAMO ||--o{ HISTORIAL_PRESTAMO : registra
+    SERVICIO ||--o{ HISTORIAL_SERVICIO : registra
+    UBICACION ||--o{ HISTORIAL_UBICACION : registra
+    USUARIO ||--o{ CONSULTA_PLANTILLA : consulta
+    PLANTILLA_TECNICO_ASISTENTE ||--o{ CONSULTA_PLANTILLA : es_consultada
+    USUARIO ||--o{ CONSULTA_UBICACION : consulta
+    UBICACION ||--o{ CONSULTA_UBICACION : es_consultada
+    USUARIO ||--o{ REALIZA_TAREA : realiza
+    TAREAS ||--o{ REALIZA_TAREA : se_asigna
+    USUARIO ||--o{ SOLICITA_PRESTAMO : vincula
+    PRESTAMO ||--o{ SOLICITA_PRESTAMO : vincula
+    USUARIO ||--o{ SOLICITA_SERVICIO : vincula
+    SERVICIO ||--o{ SOLICITA_SERVICIO : vincula

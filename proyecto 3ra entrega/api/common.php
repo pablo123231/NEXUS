@@ -2,6 +2,7 @@
 declare(strict_types=1);
 
 require_once dirname(__DIR__) . '/seguridad/bootstrap.php';
+require_once dirname(__DIR__) . '/src/autoload.php';
 segFiltroTemprano();
 segIniciarSesion();
 
@@ -239,6 +240,8 @@ function usuarioCliente(array $fila, bool $incluirContrasena = false): array {
 function ejecutar(callable $operacion): void {
     try {
         $operacion();
+    } catch (\Nexus\Shared\DomainException $error) {
+        errorApi($error->getMessage(), $error->httpStatus());
     } catch (PDOException $error) {
         error_log($error->getMessage());
         if ($error->getCode() === '23000') {

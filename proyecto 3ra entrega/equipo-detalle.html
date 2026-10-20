@@ -15,7 +15,7 @@
   <body data-section="inventario" data-requires-auth="true">
     <div id="cabecera-superior"></div>
     <main>
-      <div id="mensaje-equipo-detalle"></div>
+      <div id="mensaje-equipo-detalle" aria-live="polite" aria-atomic="true"></div>
       <div id="cuadrilla-de-detalle" class="detail-grid regla-diseno-007"></div>
       <div id="contenedor-modal"></div>
     </main>
@@ -126,6 +126,18 @@
           ]),
         );
         const historial = (await obtenerHistorialInventario()).slice(0, 5);
+        const categoriasEquipo = await solicitarApi('api/catalogos.php?tipo=categoria_tecnologica');
+        function opcionesCategoriaEquipo() {
+          let html = '';
+          let incluida = false;
+          for (let i = 0; i < categoriasEquipo.length; i++) {
+            const seleccionada = categoriasEquipo[i].nombre === equipo.tipo;
+            incluida = incluida || seleccionada;
+            html += '<option value="' + escaparHtml(categoriasEquipo[i].nombre) + '"' + (seleccionada ? ' selected' : '') + '>' + escaparHtml(categoriasEquipo[i].nombre) + '</option>';
+          }
+          if (!incluida && equipo.tipo) html = '<option value="' + escaparHtml(equipo.tipo) + '" selected>' + escaparHtml(equipo.tipo) + ' (actual)</option>' + html;
+          return html || '<option value="" disabled>No hay categorias activas</option>';
+        }
         let historialHtml = '';
         if (historial.length === 0) {
           historialHtml =
@@ -164,7 +176,7 @@
               id: 'modal-editar-equipo',
               titulo: 'Editar equipo',
               icono: 'pencil',
-              cuerpo: '<form id="form-editar-equipo" class="auth-form"><div class="field-grid"><label class="input-stack"><span>Nombre</span><input class="text-input" id="editar-equipo-nombre" required value="' + escaparHtml(equipo.nombre) + '"></label><label class="input-stack"><span>Categoria</span><input class="text-input" id="editar-equipo-tipo" required value="' + escaparHtml(equipo.tipo) + '"></label><label class="input-stack"><span>Marca</span><input class="text-input" id="editar-equipo-marca" value="' + escaparHtml(equipo.marca || '') + '"></label><label class="input-stack"><span>Cantidad</span><input class="text-input" id="editar-equipo-cantidad" type="number" min="1" required value="' + escaparHtml(equipo.cantidad || 1) + '"></label><label class="input-stack"><span>Estado</span><select class="select-input" id="editar-equipo-estado"><option value="Disponible">Disponible</option><option value="Mantenimiento">Mantenimiento</option></select></label></div><label class="input-stack"><span>Observaciones</span><textarea class="textarea-input" id="editar-equipo-observaciones">' + escaparHtml(equipo.observaciones || '') + '</textarea></label></form>',
+              cuerpo: '<form id="form-editar-equipo" class="auth-form"><div class="field-grid"><label class="input-stack"><span>Nombre</span><input class="text-input" id="editar-equipo-nombre" required value="' + escaparHtml(equipo.nombre) + '"></label><label class="input-stack"><span>Categoria</span><select class="select-input" id="editar-equipo-tipo" required>' + opcionesCategoriaEquipo() + '</select></label><label class="input-stack"><span>Marca</span><input class="text-input" id="editar-equipo-marca" value="' + escaparHtml(equipo.marca || '') + '"></label><label class="input-stack"><span>Estado</span><select class="select-input" id="editar-equipo-estado"><option value="Disponible">Disponible</option><option value="Mantenimiento">Mantenimiento</option></select></label></div><label class="input-stack"><span>Observaciones</span><textarea class="textarea-input" id="editar-equipo-observaciones">' + escaparHtml(equipo.observaciones || '') + '</textarea></label></form>',
               pieDeModal: '<button class="boton boton--outline" type="button" data-modal-close>Cancelar</button><button class="boton boton--primary" type="submit" form="form-editar-equipo">Guardar cambios</button>',
             }),
         );
@@ -241,7 +253,6 @@
               nombre: document.getElementById('editar-equipo-nombre').value,
               tipo: document.getElementById('editar-equipo-tipo').value,
               marca: document.getElementById('editar-equipo-marca').value,
-              cantidad: Number(document.getElementById('editar-equipo-cantidad').value),
               observaciones: document.getElementById('editar-equipo-observaciones').value,
               estado: document.getElementById('editar-equipo-estado').value,
               seccionId: equipo.seccionId,

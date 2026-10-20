@@ -1,0 +1,21 @@
+<?php
+declare(strict_types=1);
+use Nexus\Application\Seguridad\SeguridadCuentaService;use Nexus\Domain\Seguridad\PasswordHasher;use Nexus\Domain\Seguridad\PasswordPolicy;use Nexus\Domain\Seguridad\PendingTotpStore;use Nexus\Domain\Seguridad\SeguridadCuentaRepository;use Nexus\Domain\Seguridad\TotpProvider;use Nexus\Domain\ValueObject\Cedula;
+require_once __DIR__.'/../proyecto 3ra entrega/src/autoload.php';
+final class HashCuenta implements PasswordHasher{public function hash(string $p):string{return password_hash($p,PASSWORD_BCRYPT);}public function verify(string $p,string $h):bool{return password_verify($p,$h);}}
+final class PoliticaCuenta implements PasswordPolicy{public function validar(string $p):void{if(strlen($p)<8)throw new RuntimeException('Clave débil.');}}
+final class TotpCuenta implements TotpProvider{public function generar():string{return 'SECRETO123';}public function uri(string $s,string $c):string{return 'otpauth://totp/NEXUS:'.$c.'?secret='.$s;}public function verificar(string $s,string $c,?int $u):?int{return $c==='123456'?100:null;}}
+final class PendienteCuenta implements PendingTotpStore{public ?array $v=null;public function guardar(string $s,int $i):void{$this->v=['secreto'=>$s,'inicio'=>$i];}public function obtener():?array{return $this->v;}public function eliminar():void{$this->v=null;}}
+final class SeguridadMemoria implements SeguridadCuentaRepository
+{
+    public array $usuarios;public array $eventos=[];public function __construct(){$this->usuarios=['57324099'=>['hash'=>password_hash('Actual123!',PASSWORD_BCRYPT),'totp_secreto'=>null,'totp_ultimo_paso'=>null,'version'=>1],'66666666'=>['hash'=>password_hash('Otra123!',PASSWORD_BCRYPT),'totp_secreto'=>'OTRO','totp_ultimo_paso'=>1,'version'=>1]];}
+    public function segundoFactor(Cedula $c):array{return ['totp_secreto'=>$this->usuarios[$c->value()]['totp_secreto'],'totp_ultimo_paso'=>$this->usuarios[$c->value()]['totp_ultimo_paso']];}public function passwordHash(Cedula $c):string{return $this->usuarios[$c->value()]['hash'];}public function actividad(Cedula $c,array $t,int $l):array{return $this->eventos;}public function activarTotp(Cedula $c,string $s,int $p):void{$this->usuarios[$c->value()]['totp_secreto']=$s;$this->usuarios[$c->value()]['totp_ultimo_paso']=$p;}public function actualizarPaso(Cedula $c,int $p):void{$this->usuarios[$c->value()]['totp_ultimo_paso']=$p;}public function desactivarTotp(Cedula $c):void{$this->usuarios[$c->value()]['totp_secreto']=null;}public function usuarioExiste(Cedula $c):bool{return isset($this->usuarios[$c->value()]);}public function restablecerTotp(Cedula $c):void{$this->usuarios[$c->value()]['totp_secreto']=null;$this->usuarios[$c->value()]['version']++;}public function incrementarVersion(Cedula $c):int{return ++$this->usuarios[$c->value()]['version'];}public function cambiarPassword(Cedula $c,string $h):void{$this->usuarios[$c->value()]['hash']=$h;}public function registrarEvento(string $t,Cedula $c,string $d=''):void{$this->eventos[]=['tipo'=>$t,'cedula'=>$c->value(),'detalle'=>$d];}
+}
+function assertS(bool $c,string $m):void{if(!$c)throw new RuntimeException($m);}
+$repo=new SeguridadMemoria();$store=new PendienteCuenta();$s=new SeguridadCuentaService($repo,new HashCuenta(),new PoliticaCuenta(),new TotpCuenta(),$store);$jean=new Cedula('57324099');
+$inicio=$s->iniciar($jean,'Actual123!');assertS($inicio['secreto']==='SECRETO123','No inició 2FA.');$s->confirmar($jean,'123456');assertS($repo->usuarios['57324099']['totp_secreto']==='SECRETO123','No activó 2FA.');
+$s->desactivar($jean,'Actual123!','123456',false);assertS($repo->usuarios['57324099']['totp_secreto']===null,'No desactivó 2FA.');
+$otro=new Cedula('66666666');$s->restablecer($jean,$otro);assertS($repo->usuarios['66666666']['totp_secreto']===null&&$repo->usuarios['66666666']['version']===2,'No restableció 2FA y sesiones.');
+$version=$s->cerrarSesiones($jean);assertS($version===2,'No incrementó versión de sesión.');$version=$s->cambiarPassword($jean,'Actual123!','Nueva123!');assertS($version===3&&password_verify('Nueva123!',$repo->usuarios['57324099']['hash']),'No cambió contraseña y sesiones.');
+$estado=$s->estado($jean,true,true);assertS($estado['dosFactores']['obligatorio']===true,'No informa obligatoriedad de 2FA.');
+echo "OK: 12 comportamientos de seguridad de cuenta verificados.\n";

@@ -117,7 +117,7 @@
     <script src="js/modules/inventario.js?v=modular-1"></script>
     <script src="js/modules/usuarios.js?v=modular-1"></script>
     <script src="js/modules/tareas-planilla.js?v=modular-1"></script>
-    <script src="js/modules/operaciones.js?v=4.1.0"></script>
+    <script src="js/modules/operaciones.js?v=4.2.3"></script>
     <script src="js/core/sesion.js?v=4.0.1"></script>
     <script src="js/app.js?v=modular-1"></script>
     <script>
@@ -206,39 +206,57 @@
         }
         
         async function renderCategorias() {
-          equiposPrestamoDisponibles = await obtenerEquiposDisponiblesParaPrestamo();
+          const datosCategorias = await Promise.all([
+            obtenerEquiposDisponiblesParaPrestamo(),
+            solicitarApi('api/catalogos.php?tipo=categoria_tecnologica'),
+          ]);
+          equiposPrestamoDisponibles = datosCategorias[0];
           let opciones = '<option value="" data-clave="elegir_categoria">Elegir categoria</option>';
-          const categoriasDisponibles = [];
-          for (let i = 0; i < equiposPrestamoDisponibles.length; i++) {
-            const categoria = String(equiposPrestamoDisponibles[i].tipo || 'Otro');
-            if (!categoriasDisponibles.includes(categoria)) {
-              categoriasDisponibles.push(categoria);
-            }
-          }
-          for (let i = 0; i < categoriasDisponibles.length; i++) {
-            const categoria = categoriasDisponibles[i];
+          for (let i = 0; i < datosCategorias[1].length; i++) {
+            const categoria = datosCategorias[1][i].nombre;
             opciones +=
               '<option value="' + escaparHtml(categoria) + '">' + escaparHtml(categoria) + '</option>';
           }
           selectCategoria.innerHTML = opciones;
           inicializarSelectsPersonalizados(selectCategoria);
         }
+
+        function normalizarCategoriaPrestamo(valor) {
+          return String(valor || '')
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            .toLowerCase()
+            .replace(/[^a-z0-9]+/g, ' ')
+            .replace(/\b([a-z0-9]{3,})s\b/g, '$1')
+            .trim();
+        }
         
         function renderRecursosPorCategoria() {
           const categoria = selectCategoria.value;
+          if (!categoria) {
+            contenedorRecursos.innerHTML =
+              '<div class="empty-inline regla-diseno-043">Primero elegi una categoria para ver los equipos disponibles.</div>';
+            return;
+          }
+          const categoriaNormalizada = normalizarCategoriaPrestamo(categoria);
           const recursos = equiposPrestamoDisponibles.filter(function (equipo) {
-            return equipo.tipo === categoria;
+            return normalizarCategoriaPrestamo(equipo.tipo) === categoriaNormalizada;
           });
           if (recursos.length === 0) {
             contenedorRecursos.innerHTML =
-              '<div class="empty-inline regla-diseno-043">Primero elegi una categoria para ver los recursos disponibles.</div>';
+              '<div class="empty-inline regla-diseno-043">No hay equipos disponibles para esta categoria.</div>';
             return;
           }
           let html = '';
           for (let i = 0; i < recursos.length; i++) {
             const recurso = recursos[i];
             const id = 'prestamo-recurso-' + i;
-            html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" value="${escaparHtml(recurso.nombre)}" data-equipo-id="${escaparHtml(recurso.id)}" data-loan-resource /> <span>${escaparHtml(recurso.nombre)}</span> </label> <label class="loan-resource-option__qty regla-diseno-015"> <span>Cantidad</span> <input class="text-input regla-diseno-026" type="number" min="1" max="${escaparHtml(recurso.cantidad)}" placeholder="0" disabled data-loan-quantity aria-label="Cantidad de ${escaparHtml(recurso.nombre)}" /> </label> </div> `;
+            const disponible = Number(recurso.cantidadDisponible);
+            if (recurso.estado !== 'Activo' || disponible < 1) {
+              html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" disabled /> <span>${escaparHtml(recurso.nombre)}</span> </label> <div class="loan-resource-option__qty regla-diseno-015"><span>Cantidad</span><strong>No hay equipos disponibles</strong></div> </div> `;
+              continue;
+            }
+            html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" value="${escaparHtml(recurso.nombre)}" data-equipo-id="${escaparHtml(recurso.id)}" data-loan-resource /> <span>${escaparHtml(recurso.nombre)}</span> </label> <label class="loan-resource-option__qty regla-diseno-015"> <span>Cantidad (disponibles: ${escaparHtml(disponible)})</span> <input class="text-input regla-diseno-026" type="number" min="1" max="${escaparHtml(disponible)}" placeholder="0" disabled data-loan-quantity aria-label="Cantidad de ${escaparHtml(recurso.nombre)}" /> </label> </div> `;
           }
           contenedorRecursos.innerHTML = html;
         }

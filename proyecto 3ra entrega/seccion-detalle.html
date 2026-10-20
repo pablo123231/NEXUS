@@ -16,7 +16,7 @@
     <div id="cabecera-superior"></div>
     <main>
       <div id="cabecera-de-pagina"></div>
-      <div id="mensaje-seccion"></div>
+      <div id="mensaje-seccion" aria-live="polite" aria-atomic="true"></div>
       <div id="lista-de-equipos" class="list regla-diseno-037"></div>
       <div id="contenedor-modal"></div>
     </main>
@@ -40,6 +40,7 @@
         let idSeccion = obtenerParametroDeUrl('id');
         let seccionActual = await obtenerSeccionInventarioPorId(idSeccion);
         const seccionesInventario = await obtenerSeccionesInventario();
+        const categoriasTecnologicas = await solicitarApi('api/catalogos.php?tipo=categoria_tecnologica');
         let equipoTrasladoSeleccionado = null;
         if (!seccionActual && seccionesInventario.length > 0) {
           seccionActual = seccionesInventario[0];
@@ -50,13 +51,13 @@
         }
         function opcionesTiposEquipo() {
           return crearOpcionesSelect(
-            tiposDeEquipoInventario,
+            categoriasTecnologicas,
             '<option value="" data-clave="elegir_tipo">Elegir tipo</option>',
             function (tipo) {
-              return tipo.valor;
+              return tipo.nombre;
             },
             function (tipo) {
-              return tipo.etiqueta;
+              return tipo.nombre;
             },
           );
         }

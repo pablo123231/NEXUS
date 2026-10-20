@@ -1,193 +1,37 @@
 <?php
 declare(strict_types=1);
+use Nexus\Application\Incidencia\IncidenciaService;
+use Nexus\Domain\Incidencia\EstadoIncidencia;
+use Nexus\Domain\ValueObject\Cedula;
+use Nexus\Infrastructure\Persistence\PdoIncidenciaRepository;
+use Nexus\Shared\DomainException;
 require_once __DIR__ . '/common.php';
-
-exigirMetodo(['GET', 'POST', 'PUT', 'PATCH', 'DELETE']);
-$sesionActual = autorizarEndpoint('incidencias');
-
-function exigirUsuario(PDO $pdo, string $cedula, string $mensaje): void {
-    $consulta = $pdo->prepare('SELECT 1 FROM USUARIO WHERE cedula = ?');
-    $consulta->execute([$cedula]);
-    if (!$consulta->fetch()) {
-        errorApi($mensaje, 404);
+exigirMetodo(['GET','POST','PUT','PATCH','DELETE']);
+$sesionActual=autorizarEndpoint('incidencias');
+$servicio=new IncidenciaService(new PdoIncidenciaRepository($pdo));
+ejecutar(function() use($servicio,$sesionActual): void {
+    $metodo=$_SERVER['REQUEST_METHOD'];
+    $usuario=new Cedula((string)$sesionActual['cedula']);
+    $puedeGestionar=in_array($sesionActual['rol'],['Tecnico_Asistente','Administrador'],true);
+    if($metodo==='GET') responder($servicio->listar($usuario,$puedeGestionar));
+    $datos=cuerpoJson();
+    if($metodo==='POST'){
+        $idEquipo=isset($datos['idEquipo'])&&$datos['idEquipo']!==''?entero($datos['idEquipo'],'idEquipo'):null;
+        $id=$servicio->crear(['categoria'=>texto($datos['categoria']??'',60),'titulo'=>texto($datos['asunto']??'',100),'lugar'=>texto($datos['ubicacion']??'',100),'descripcion'=>texto($datos['mensaje']??'',65535),'idEquipo'=>$idEquipo],$usuario);
+        responder(['ok'=>true,'id'=>(string)$id],201);
     }
-}
-
-function exigirIncidencia(PDO $pdo, int $id): void {
-    $consulta = $pdo->prepare('SELECT 1 FROM INCIDENCIA WHERE id_ticket = ?');
-    $consulta->execute([$id]);
-    if (!$consulta->fetch()) {
-        errorApi('No existe la incidencia indicada.', 404);
+    $id=entero($datos['id']??null,'id');
+    if($metodo==='DELETE'){$servicio->baja($id);responder(['ok'=>true]);}
+    if(!$puedeGestionar) throw new DomainException('No tenes permisos para gestionar incidencias.',403);
+    $accion=texto($datos['accion']??'',30);
+    if($accion==='comentar') $servicio->comentar($id,texto($datos['comentario']??'',65535));
+    elseif($accion==='modificar_diagnostico') $servicio->diagnostico($id,texto($datos['diagnostico']??'',65535),texto($datos['solucion']??'',65535));
+    elseif($accion==='baja_diagnostico') $servicio->diagnostico($id,null,null);
+    elseif($accion==='tomar') $servicio->tomar($id,$usuario);
+    else {
+        $estado=EstadoIncidencia::desdeCliente((string)($datos['estado']??''));
+        if($accion==='cerrar'&&!$estado->esFinal()) throw new DomainException('El cierre solo admite los estados Resuelto o Cerrado.');
+        $servicio->estado($id,$estado,$usuario,texto($datos['diagnostico']??'',65535),texto($datos['solucion']??'',65535));
     }
-}
-
-ejecutar(function () use ($pdo, $sesionActual): void {
-    if ($_SERVER['REQUEST_METHOD'] === 'GET') {
-        
-        $consulta = $pdo->prepare(
-            'SELECT i.id_ticket, i.categoria, i.descripcion, i.titulo, i.fecha_de_solicitud, i.lugar,
-                    i.fecha_cierre, i.estado, i.diagnostico, i.solucion, i.comentario_resolucion, i.id_equipo,
-                    i.cedula_crea, i.cedula_responde,
-                    creador.nombre AS nombre_crea, creador.apellido AS apellido_crea,
-                    responsable.nombre AS nombre_responde, responsable.apellido AS apellido_responde
-             FROM INCIDENCIA i
-             INNER JOIN USUARIO creador ON creador.cedula = i.cedula_crea
-             LEFT JOIN USUARIO responsable ON responsable.cedula = i.cedula_responde
-             WHERE i.esta_activa = 1 ORDER BY i.id_ticket DESC'
-        );
-        $consulta->execute();
-        $tickets = [];
-        foreach ($consulta->fetchAll(PDO::FETCH_ASSOC) as $fila) {
-            if (!in_array($sesionActual['rol'], ['Tecnico_Asistente', 'Administrador'], true)
-                && (string) $fila['cedula_crea'] !== (string) $sesionActual['cedula']) {
-                continue;
-            }
-            $gestionadoPor = $fila['cedula_responde'] === null
-                ? ''
-                : trim($fila['nombre_responde'] . ' ' . $fila['apellido_responde']);
-            $tickets[] = [
-                'id' => (string) $fila['id_ticket'],
-                'asunto' => $fila['titulo'],
-                'categoria' => $fila['categoria'],
-                'estado' => estadoIncidenciaCliente($fila['estado']),
-                'ubicacion' => $fila['lugar'],
-                'mensaje' => $fila['descripcion'],
-                'solicitante' => trim($fila['nombre_crea'] . ' ' . $fila['apellido_crea']),
-                'solicitanteId' => (string) $fila['cedula_crea'],
-                'gestionadoPor' => $gestionadoPor,
-                'tecnicoId' => $fila['cedula_responde'] === null ? '' : (string) $fila['cedula_responde'],
-                'equipoId' => $fila['id_equipo'] === null ? '' : (string) $fila['id_equipo'],
-                'creadoEn' => $fila['fecha_de_solicitud'],
-                'diagnostico' => $fila['diagnostico'],
-                'solucion' => $fila['solucion'],
-                'comentarioResolucion' => $fila['comentario_resolucion'] ?? '',
-                'fechaCierre' => $fila['fecha_cierre'],
-            ];
-        }
-        responder($tickets);
-    }
-
-    $datos = cuerpoJson();
-    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-        $cedula = (string) $sesionActual['cedula'];
-        if ($cedula === '') {
-            errorApi('El solicitante es obligatorio.');
-        }
-        exigirUsuario($pdo, $cedula, 'No existe el usuario solicitante indicado.');
-        
-        $categoria = texto($datos['categoria'] ?? '', 60);
-        $titulo = texto($datos['asunto'] ?? '', 100);
-        $lugar = texto($datos['ubicacion'] ?? '', 100);
-        $descripcion = texto($datos['mensaje'] ?? '', 65535);
-        if ($titulo === '' || $descripcion === '') {
-            errorApi('El asunto y el mensaje son obligatorios.');
-        }
-        $idEquipo = isset($datos['idEquipo']) && $datos['idEquipo'] !== ''
-            ? entero($datos['idEquipo'], 'idEquipo')
-            : null;
-        if ($idEquipo !== null) {
-            $equipo = $pdo->prepare('SELECT 1 FROM EQUIPO WHERE id_equipo = ?');
-            $equipo->execute([$idEquipo]);
-            if (!$equipo->fetch()) {
-                errorApi('No existe el equipo indicado.', 404);
-            }
-        }
-        
-        $consulta = $pdo->prepare(
-            "INSERT INTO INCIDENCIA
-             (categoria, descripcion, titulo, fecha_de_solicitud, lugar, estado, id_equipo, cedula_crea)
-             VALUES (?, ?, ?, CURDATE(), ?, 'Pendiente', ?, ?)"
-        );
-        $consulta->execute([$categoria, $descripcion, $titulo, $lugar, $idEquipo, $cedula]);
-        responder(['ok' => true, 'id' => (string) $pdo->lastInsertId()], 201);
-    }
-
-    $accion = texto($datos['accion'] ?? '', 30);
-    $id = entero($datos['id'] ?? null, 'id');
-    if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
-        exigirIncidencia($pdo, $id);
-        $consulta = $pdo->prepare("UPDATE INCIDENCIA SET esta_activa = 0, estado = 'Cerrado', fecha_cierre = CURDATE() WHERE id_ticket = ?");
-        $consulta->execute([$id]);
-        responder(['ok' => true]);
-    }
-    $tecnico = (string) $sesionActual['cedula'];
-
-    if ($accion === 'comentar') {
-        exigirIncidencia($pdo, $id);
-        $comentario = texto($datos['comentario'] ?? '', 65535);
-        if ($comentario === '') {
-            errorApi('El comentario no puede quedar vacio.');
-        }
-        $consulta = $pdo->prepare(
-            "UPDATE INCIDENCIA SET comentario_resolucion = ? WHERE id_ticket = ? AND estado IN ('Resuelto', 'Cerrado')"
-        );
-        $consulta->execute([$comentario, $id]);
-        if (!$consulta->rowCount()) {
-            errorApi('Solo se puede comentar una incidencia resuelta o cerrada.', 409);
-        }
-        responder(['ok' => true]);
-    }
-
-    if ($accion === 'modificar_diagnostico') {
-        exigirIncidencia($pdo, $id);
-        $consulta = $pdo->prepare('UPDATE INCIDENCIA SET diagnostico = ?, solucion = ? WHERE id_ticket = ?');
-        $consulta->execute([texto($datos['diagnostico'] ?? '', 65535), texto($datos['solucion'] ?? '', 65535), $id]);
-        responder(['ok' => true]);
-    }
-    if ($accion === 'baja_diagnostico') {
-        exigirIncidencia($pdo, $id);
-        $consulta = $pdo->prepare('UPDATE INCIDENCIA SET diagnostico = NULL, solucion = NULL WHERE id_ticket = ?');
-        $consulta->execute([$id]);
-        responder(['ok' => true]);
-    }
-
-    if ($accion === 'tomar') {
-        if ($tecnico === '') {
-            errorApi('La cedula del tecnico responsable es obligatoria.');
-        }
-        exigirIncidencia($pdo, $id);
-        exigirUsuario($pdo, $tecnico, 'No existe el tecnico responsable indicado.');
-        $consulta = $pdo->prepare(
-            "UPDATE INCIDENCIA SET cedula_responde = ?, estado = 'En proceso' WHERE id_ticket = ?"
-        );
-        $consulta->execute([$tecnico, $id]);
-        responder(['ok' => true]);
-    }
-
-    if ($accion === 'cerrar') {
-        $estado = estadoIncidenciaBase((string) ($datos['estado'] ?? ''));
-        if (!in_array($estado, ['Resuelto', 'Cerrado'], true)) {
-            errorApi('El cierre solo admite los estados Resuelto o Cerrado.');
-        }
-        exigirIncidencia($pdo, $id);
-        if ($tecnico !== '') {
-            exigirUsuario($pdo, $tecnico, 'No existe el tecnico responsable indicado.');
-        }
-        $diagnostico = texto($datos['diagnostico'] ?? '', 65535);
-        $solucion = texto($datos['solucion'] ?? '', 65535);
-        $consulta = $pdo->prepare(
-            'UPDATE INCIDENCIA
-             SET estado = ?, diagnostico = ?, solucion = ?, fecha_cierre = CURDATE(),
-                 cedula_responde = COALESCE(NULLIF(?, \'\'), cedula_responde)
-             WHERE id_ticket = ?'
-        );
-        $consulta->execute([$estado, $diagnostico, $solucion, $tecnico, $id]);
-        responder(['ok' => true]);
-    }
-
-    
-    $estado = estadoIncidenciaBase((string) ($datos['estado'] ?? ''));
-    exigirIncidencia($pdo, $id);
-    if ($tecnico !== '') {
-        exigirUsuario($pdo, $tecnico, 'No existe el tecnico responsable indicado.');
-    }
-    $cerrar = in_array($estado, ['Resuelto', 'Cerrado'], true) ? date('Y-m-d') : null;
-    $consulta = $pdo->prepare(
-        'UPDATE INCIDENCIA
-         SET estado = ?, fecha_cierre = ?,
-             cedula_responde = COALESCE(NULLIF(?, \'\'), cedula_responde)
-         WHERE id_ticket = ?'
-    );
-    $consulta->execute([$estado, $cerrar, $tecnico, $id]);
-    responder(['ok' => true]);
+    responder(['ok'=>true]);
 });

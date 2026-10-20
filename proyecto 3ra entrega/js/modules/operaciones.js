@@ -6,8 +6,11 @@ async function obtenerPrestamos() {
 
 async function obtenerEquiposDisponiblesParaPrestamo() {
   const equipos = await solicitarApi('api/equipos.php');
-  return equipos.filter(function (equipo) {
-    return equipo.estado === 'Activo' && Number(equipo.cantidad) > 0;
+  return equipos.map(function (equipo) {
+    equipo.cantidadDisponible = Number(
+      equipo.cantidadDisponible === undefined ? equipo.cantidad : equipo.cantidadDisponible,
+    );
+    return equipo;
   });
 }
 async function obtenerTicketsSoporte() {

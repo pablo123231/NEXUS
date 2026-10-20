@@ -167,6 +167,9 @@ CREATE TABLE `equipo` (
   `id_ubicacion` int(11) NOT NULL,
   PRIMARY KEY (`id_equipo`),
   KEY `fk_equipo_ubicacion` (`id_ubicacion`),
+  KEY `idx_equipo_disponibilidad` (`esta_activo`,`estado_equipo`,`id_ubicacion`),
+  CONSTRAINT `chk_equipo_cantidad` CHECK (`cantidad_del_equipo` >= 0),
+  CONSTRAINT `chk_equipo_activo` CHECK (`esta_activo` in (0,1)),
   CONSTRAINT `fk_equipo_ubicacion` FOREIGN KEY (`id_ubicacion`) REFERENCES `ubicacion` (`id_ubicacion`)
 ) ENGINE=InnoDB AUTO_INCREMENT=4 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -322,6 +325,10 @@ CREATE TABLE `incidencia` (
   KEY `fk_incidencia_equipo` (`id_equipo`),
   KEY `fk_incidencia_crea` (`cedula_crea`),
   KEY `fk_incidencia_responde` (`cedula_responde`),
+  KEY `idx_incidencia_bandeja` (`esta_activa`,`estado`,`id_ticket`),
+  KEY `idx_incidencia_creador_activa` (`cedula_crea`,`esta_activa`,`id_ticket`),
+  CONSTRAINT `chk_incidencia_activa` CHECK (`esta_activa` in (0,1)),
+  CONSTRAINT `chk_incidencia_fechas` CHECK (`fecha_cierre` is null or `fecha_cierre` >= `fecha_de_solicitud`),
   CONSTRAINT `fk_incidencia_crea` FOREIGN KEY (`cedula_crea`) REFERENCES `usuario` (`cedula`),
   CONSTRAINT `fk_incidencia_equipo` FOREIGN KEY (`id_equipo`) REFERENCES `equipo` (`id_equipo`),
   CONSTRAINT `fk_incidencia_responde` FOREIGN KEY (`cedula_responde`) REFERENCES `usuario` (`cedula`)
@@ -391,6 +398,10 @@ CREATE TABLE `prestamo` (
   PRIMARY KEY (`id_prestamo`),
   KEY `fk_prestamo_usuario` (`cedula`),
   KEY `fk_prestamo_equipo` (`id_equipo`),
+  KEY `idx_prestamo_bandeja` (`esta_activo`,`cedula`,`id_prestamo`),
+  KEY `idx_prestamo_estado_fecha` (`estado`,`fecha_devolucion`),
+  CONSTRAINT `chk_prestamo_activo` CHECK (`esta_activo` in (0,1)),
+  CONSTRAINT `chk_prestamo_fechas` CHECK (`fecha_devolucion` >= `fecha_solicitado`),
   CONSTRAINT `fk_prestamo_equipo` FOREIGN KEY (`id_equipo`) REFERENCES `equipo` (`id_equipo`),
   CONSTRAINT `fk_prestamo_usuario` FOREIGN KEY (`cedula`) REFERENCES `usuario` (`cedula`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -587,6 +598,9 @@ CREATE TABLE `servicio` (
   `esta_activo` tinyint(1) NOT NULL DEFAULT 1,
   PRIMARY KEY (`id_servicio`),
   KEY `fk_servicio_usuario` (`cedula`),
+  KEY `idx_servicio_bandeja` (`esta_activo`,`cedula`,`id_servicio`),
+  KEY `idx_servicio_estado_fecha` (`estado`,`fecha_de_solicitud`),
+  CONSTRAINT `chk_servicio_activo` CHECK (`esta_activo` in (0,1)),
   CONSTRAINT `fk_servicio_usuario` FOREIGN KEY (`cedula`) REFERENCES `usuario` (`cedula`)
 ) ENGINE=InnoDB AUTO_INCREMENT=2 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
@@ -731,6 +745,7 @@ CREATE TABLE `solicitud_registro` (
   PRIMARY KEY (`id_solicitud_registro`),
   KEY `fk_solreg_manda` (`id_usuario_manda`),
   KEY `fk_solreg_responde` (`id_usuario_responde`),
+  KEY `idx_solicitud_registro_estado` (`estado_solicitud`,`id_solicitud_registro`),
   CONSTRAINT `fk_solreg_manda` FOREIGN KEY (`id_usuario_manda`) REFERENCES `usuario` (`cedula`),
   CONSTRAINT `fk_solreg_responde` FOREIGN KEY (`id_usuario_responde`) REFERENCES `usuario` (`cedula`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -763,7 +778,8 @@ CREATE TABLE `tareas` (
   `estado_tarea` enum('Pendiente','En curso','En revision','Completada') NOT NULL DEFAULT 'Pendiente',
   `color_tarea` char(7) DEFAULT NULL,
   `fecha_agregada` date NOT NULL,
-  PRIMARY KEY (`id_tarea`)
+  PRIMARY KEY (`id_tarea`),
+  KEY `idx_tareas_tablero` (`estado_tarea`,`plazo_tarea`,`id_tarea`)
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -788,7 +804,9 @@ CREATE TABLE `ubicacion` (
   `id_ubicacion` int(11) NOT NULL AUTO_INCREMENT,
   `seccion_inventario` varchar(100) NOT NULL,
   `esta_activa` tinyint(1) NOT NULL DEFAULT 1,
-  PRIMARY KEY (`id_ubicacion`)
+  PRIMARY KEY (`id_ubicacion`),
+  KEY `idx_ubicacion_activa_nombre` (`esta_activa`,`seccion_inventario`),
+  CONSTRAINT `chk_ubicacion_activa` CHECK (`esta_activa` in (0,1))
 ) ENGINE=InnoDB AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -826,7 +844,11 @@ CREATE TABLE `usuario` (
   `totp_ultimo_paso` bigint(20) DEFAULT NULL,
   `sesion_version` int(11) NOT NULL DEFAULT 0,
   PRIMARY KEY (`cedula`),
-  UNIQUE KEY `uq_usuario_correo` (`correo_electronico`)
+  UNIQUE KEY `uq_usuario_correo` (`correo_electronico`),
+  KEY `idx_usuario_bandeja` (`esta_activo`,`estado`,`rol`,`nombre`,`apellido`),
+  CONSTRAINT `chk_usuario_activo` CHECK (`esta_activo` in (0,1)),
+  CONSTRAINT `chk_usuario_cambio_clave` CHECK (`debe_cambiar_contrasena` in (0,1)),
+  CONSTRAINT `chk_usuario_sesion_version` CHECK (`sesion_version` >= 0)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 

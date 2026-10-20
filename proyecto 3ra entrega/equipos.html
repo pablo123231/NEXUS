@@ -16,7 +16,7 @@
     <div id="cabecera-superior"></div>
     <main>
       <div id="cabecera-de-pagina"></div>
-      <div id="mensaje-equipos"></div>
+      <div id="mensaje-equipos" aria-live="polite" aria-atomic="true"></div>
       <div class="filter-panel filter-panel--page regla-diseno-057">
         <div id="barra-de-filtros" class="filter-bar filter-panel__body regla-diseno-057"></div>
       </div>
@@ -114,6 +114,7 @@
             equipoTrasladoSeleccionado.nombre + ' | Seccion actual: ' + equipoTrasladoSeleccionado.seccion;
           const selectDestino = document.getElementById('equipo-seccion-destino-lista');
           selectDestino.innerHTML = opcionesSeccionesDestinoTraslado(equipoTrasladoSeleccionado);
+          inicializarSelectsPersonalizados(selectDestino);
           const botonConfirmar = document.querySelector('[data-confirm-move-equipo]');
           botonConfirmar.disabled = seccionesInventario.length < 2;
           abrirModal('modal-traslado-equipo-lista');

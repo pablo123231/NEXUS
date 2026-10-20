@@ -147,8 +147,50 @@ function crearIndiceI18n() {
 
 const CLAVES_I18N_POR_TEXTO = crearIndiceI18n();
 
+const CLAVES_I18N_LEGADAS = {
+  'La sesion vencio. Volve a iniciar sesion.': 'sesion_vencida',
+  'El servidor devolvio una respuesta invalida.': 'respuesta_invalida',
+  'No se pudo completar la solicitud.': 'solicitud_fallida',
+  'No se pudo iniciar sesion.': 'inicio_sesion_fallido',
+  'Los datos no corresponden a una cuenta activa.': 'datos_recuperacion_invalidos',
+  'No existe una solicitud con esos datos.': 'solicitud_recuperacion_inexistente',
+  'Debes iniciar sesion para continuar.': 'inicio_sesion_requerido',
+  'No tenes permisos para realizar esta operacion.': 'sin_permisos',
+  'Token de seguridad invalido o vencido.': 'token_invalido',
+  'El cuerpo de la solicitud debe ser JSON valido.': 'json_invalido',
+  'Metodo no permitido.': 'metodo_no_permitido',
+  'No se pudo completar la operacion en la base de datos.': 'error_base_datos',
+  'Correo, cedula o contrasena incorrectos.': 'credenciales_incorrectas',
+  'Tu cuenta todavia no esta habilitada. Un administrador debe aprobarla.': 'cuenta_sin_habilitar',
+  'Ingles': 'ingles',
+  'Configuracion': 'configuracion',
+  'Cerrar sesion': 'cerrar_sesion',
+  'Prestamos': 'prestamos',
+  'Incidencias tecnicas': 'soporte_tecnico',
+  'Imagenes': 'imagenes',
+  'Usuario tecnico': 'usuario_tecnico',
+  'Gestion diaria del area TI': 'gestion_diaria_del_area_ti',
+  'Portal de Gestion TI': 'portal_de_gestion_ti',
+  'Modulos disponibles': 'modulos_disponibles',
+  'Cedula': 'cedula',
+  'Descripcion': 'descripcion',
+  'Categoria': 'categoria',
+  'Correo o cedula': 'correo_o_cedula',
+  'Inicia sesion': 'inicia_sesion',
+  'Iniciar sesion': 'iniciar_sesion',
+  'Mantener sesion iniciada': 'mantener_sesion',
+  'Pedir ayuda tecnica': 'pedir_ayuda_tecnica',
+  'Plantel tecnico-administrativo': 'plantel_tecnico_administrativo',
+  'Trabajo tecnico': 'trabajo_tecnico',
+  'Gestion TI Institucional': 'gestion_ti_institucional',
+  'Seccion': 'seccion',
+  'Actualizacion': 'actualizacion',
+  'Navegacion principal': 'navegacion_principal',
+};
+
 function obtenerClaveI18nPorTexto(texto) {
-  return CLAVES_I18N_POR_TEXTO[normalizarClaveTraduccion(texto)] || '';
+  const normalizado = normalizarClaveTraduccion(texto);
+  return CLAVES_I18N_POR_TEXTO[normalizado] || CLAVES_I18N_LEGADAS[normalizado] || '';
 }
 
 function obtenerTraduccionPorClave(clave, idioma) {
@@ -931,6 +973,14 @@ function mostrarMensajeFormulario(destino, texto, tipo, claseExtra) {
   const elemento = typeof destino === 'string' ? document.getElementById(destino) : destino;
   if (elemento) {
     elemento.innerHTML = crearMensajeFormulario(texto, tipo, claseExtra);
+    const version = String(Date.now());
+    elemento.dataset.mensajeVersion = version;
+    window.setTimeout(function () {
+      if (elemento.dataset.mensajeVersion === version) {
+        elemento.innerHTML = '';
+        delete elemento.dataset.mensajeVersion;
+      }
+    }, tipo === 'success' ? 4500 : 6500);
   }
 }
 

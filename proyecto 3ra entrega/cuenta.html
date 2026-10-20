@@ -15,7 +15,10 @@
   <body class="account-redesign" data-section="cuenta" data-requires-auth="true">
     <div id="cabecera-superior"></div>
     <main class="portal-main regla-diseno-001">
-      <p><a class="boton boton--outline" href="solicitar-rol.html">Solicitar cambio de rol</a></p>
+      <section class="account-role-callout">
+        <div><strong>¿Necesitás otro rol?</strong><span>Enviá una solicitud para que un administrador la revise.</span></div>
+        <a class="boton boton--primary" href="solicitar-rol.html">Solicitar cambio de rol</a>
+      </section>
       <div id="cabecera-de-pagina"></div>
       <section class="profile-layout account-profile-layout regla-diseno-007">
         <aside id="perfil-resumen"></aside>
@@ -26,7 +29,7 @@
             </div>
           </div>
           <div class="panel__body regla-diseno-012">
-            <div id="mensaje-cuenta"></div>
+            <div id="mensaje-cuenta" aria-live="polite" aria-atomic="true"></div>
             <form id="form-cuenta" class="auth-form regla-diseno-033">
               <div class="input-stack regla-diseno-025">
                   <label for="cuenta-descripcion" data-clave="descripcion_bio">DESCRIPCION</label>
@@ -57,15 +60,6 @@
                 </div>
               </div>
               <div class="field-grid regla-diseno-024">
-                <div class="input-stack regla-diseno-025">
-                  <label for="cuenta-fecha-registro" data-clave="fecha_registro">Fecha de registro</label>
-                  <input
-                    class="text-input regla-diseno-026"
-                    id="cuenta-fecha-registro"
-                    type="text"
-                    readonly
-                  />
-                </div>
                 <div class="input-stack regla-diseno-025">
                   <label for="cuenta-rol" data-clave="rol">Rol</label>
                   <input
@@ -119,13 +113,11 @@
           </div>
         </div>
         <div class="panel__body regla-diseno-012">
-          <div id="mensaje-seguridad"></div>
-          <div class="seguridad-grid">
-            <article class="seguridad-bloque">
-              <h3 class="seguridad-bloque__titulo">Verificacion en dos pasos</h3>
-              <div id="bloque-2fa"><p class="seguridad-nota">Cargando...</p></div>
-            </article>
-            <article class="seguridad-bloque">
+          <div id="mensaje-seguridad" aria-live="polite" aria-atomic="true"></div>
+          <div class="seguridad-grid seguridad-grid--password-only">
+            <div id="bloque-2fa" hidden></div>
+            <div id="tabla-actividad" hidden></div>
+            <article class="seguridad-bloque seguridad-bloque--password">
               <h3 class="seguridad-bloque__titulo">Cambiar contrasena</h3>
               <form id="form-contrasena" class="seguridad-form">
                 <div class="input-stack regla-diseno-025">
@@ -143,29 +135,7 @@
                 <button class="boton boton--primary boton--sm" type="submit">Cambiar contrasena</button>
               </form>
             </article>
-            <article class="seguridad-bloque seguridad-bloque--ancho">
-              <div class="seguridad-bloque__cabecera">
-                <h3 class="seguridad-bloque__titulo">Actividad reciente</h3>
-                <button class="boton boton--outline-danger boton--sm" id="boton-cerrar-sesiones" type="button">
-                  Cerrar todas las otras sesiones
-                </button>
-              </div>
-              <p class="seguridad-nota">
-                Si ves un ingreso que no reconoces, cambia la contrasena y cerra las demas sesiones.
-              </p>
-              <div id="tabla-actividad"></div>
-            </article>
-            <article class="seguridad-bloque" id="bloque-admin-2fa" hidden>
-              <h3 class="seguridad-bloque__titulo">Restablecer verificacion de otro usuario</h3>
-              <p class="seguridad-nota">Para quien perdio el telefono. Tambien cierra sus sesiones.</p>
-              <form id="form-restablecer-2fa" class="seguridad-form">
-                <div class="input-stack regla-diseno-025">
-                  <label for="cedula-restablecer">Cedula</label>
-                  <input class="text-input regla-diseno-026" id="cedula-restablecer" type="text" inputmode="numeric" pattern="[0-9.\-]{6,15}" required />
-                </div>
-                <button class="boton boton--outline-danger boton--sm" type="submit">Restablecer</button>
-              </form>
-            </article>
+            <div id="bloque-admin-2fa" hidden></div>
           </div>
         </div>
       </section>

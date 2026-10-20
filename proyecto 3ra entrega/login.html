@@ -32,6 +32,10 @@
             <small data-clave="gestion_ti_institucional">Gestion TI Institucional</small>
           </span>
         </a>
+        <div class="public-language segmented-control" role="group" aria-label="Cambiar idioma" data-clave-aria-label="cambiar_idioma">
+          <button type="button" data-idioma-opcion="es" aria-pressed="true">ES</button>
+          <button type="button" data-idioma-opcion="en" aria-pressed="false">EN</button>
+        </div>
       </header>
       <section class="auth-main regla-diseno-062">
         <section class="auth-view auth-view--login auth-view--active regla-diseno-063" data-auth-view="login">
@@ -44,14 +48,14 @@
                   data-lucide="shield-check"
                   class="icon icon-sm regla-diseno-006"
                 ></i>
-                Acceso Seguro ITI CEPT
+                <span data-clave="acceso_seguro_iti">Acceso seguro ITI CEPT</span>
               </span>
               <h1 data-clave="bienvenido_de_nuevo">Bienvenido de nuevo</h1>
-              <p>Ingresa con tu correo o cedula para continuar trabajando en el portal.</p>
+              <p data-clave="ingresa_portal">Ingresá con tu correo o cédula para continuar trabajando en el portal.</p>
             </div>
             <article class="auth-card auth-card--login regla-diseno-065">
               <form id="form-login" class="auth-form regla-diseno-033">
-                <div id="auth-message-login"></div>
+                <div id="auth-message-login" aria-live="polite" aria-atomic="true"></div>
                 <div class="auth-field regla-diseno-025">
                   <label for="login-identificador" data-clave="correo_o_cedula">Correo o cedula</label>
                   <div class="auth-input-shell auth-input-shell--credential">
@@ -100,7 +104,7 @@
               </form>
               <!-- F-08 (3ra entrega): segundo paso del ingreso (verificacion en dos pasos) -->
               <form id="form-2fa" class="auth-form auth-2fa regla-diseno-033" hidden>
-                <div id="auth-message-2fa"></div>
+                <div id="auth-message-2fa" aria-live="polite" aria-atomic="true"></div>
                 <div id="activar-2fa" class="auth-2fa__activar" hidden>
                   <p class="auth-2fa__titulo">Tu cuenta de administrador necesita verificacion en dos pasos</p>
                   <ol class="auth-2fa__pasos">
@@ -138,22 +142,10 @@
               </form>
 
               <p class="auth-alt-action regla-diseno-101">
-                No tenes cuenta?
+                <span data-clave="no_tenes_cuenta">¿No tenés cuenta?</span>
                 <a href="register.html" data-clave="registrate">Registrate</a>
               </p>
-              <p class="auth-alt-action regla-diseno-101"><a href="recuperar.html">¿Olvidaste tu contraseña?</a></p>
-              <div class="auth-help-note regla-diseno-102">
-                <span>
-                  <i data-lucide="info" class="icon icon-sm regla-diseno-006"></i>
-                </span>
-                <p>
-                  El acceso es solo para personal autorizado. Las acciones quedan registradas para
-                  cuidar la informacion institucional.
-                  <strong class="auth-dominio">Estas en: <em id="dominio-actual" class="auth-dominio__valor"></em></strong>
-                  Antes de escribir tu contrasena, revisa que esa sea la direccion del portal y que empiece
-                  con https. Nunca te vamos a pedir la contrasena ni codigos por correo, WhatsApp o telefono.
-                </p>
-              </div>
+              <p class="auth-alt-action regla-diseno-101"><a href="recuperar.html" data-clave="olvidaste_contrasena">¿Olvidaste tu contraseña?</a></p>
             </article>
           </div>
         </section>
@@ -186,6 +178,6 @@
     <script src="js/modules/operaciones.js?v=modular-1"></script>
     <script src="js/core/sesion.js?v=4.0.1"></script>
     <script src="js/app.js?v=modular-1"></script>
-    <script src="js/paginas/login.js?v=4.1.0"></script>
+    <script src="js/paginas/login.js?v=4.2.1"></script>
   </body>
 </html>

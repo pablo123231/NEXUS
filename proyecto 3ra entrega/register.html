@@ -32,6 +32,10 @@
             <small data-clave="gestion_ti_institucional">Gestion TI Institucional</small>
           </span>
         </a>
+        <div class="public-language segmented-control" role="group" aria-label="Cambiar idioma" data-clave-aria-label="cambiar_idioma">
+          <button type="button" data-idioma-opcion="es" aria-pressed="true">ES</button>
+          <button type="button" data-idioma-opcion="en" aria-pressed="false">EN</button>
+        </div>
       </header>
       <section class="auth-main regla-diseno-062">
         <section
@@ -50,6 +54,7 @@
                   class="auth-visual-card__administrative-image"
                   src="images/registro-administrativo.png"
                   alt="Equipo administrativo gestionando inventario y solicitudes"
+                  data-clave-alt="imagen_equipo_administrativo"
                 />
               </figure>
             </article>
@@ -59,7 +64,7 @@
                   <h2 data-clave="crear_cuenta">Crear cuenta</h2>
                   <p>Completa tus datos para solicitar acceso al portal SGRSI.</p>
                 </div>
-                <div id="auth-message-register"></div>
+                <div id="auth-message-register" aria-live="polite" aria-atomic="true"></div>
                 <form id="form-register" class="auth-form regla-diseno-033">
                   <div class="auth-field regla-diseno-025">
                     <label for="register-nombre" data-clave="nombre_completo">Nombre completo</label>
@@ -103,7 +108,8 @@
                         maxlength="8"
                         minlength="8"
                         pattern="[0-9]{8}"
-                        title="La cedula debe tener exactamente 8 numeros"
+                        title="La cédula debe tener exactamente 8 números"
+                        data-clave-title="cedula_ocho_numeros"
                         required
                       data-clave-placeholder="ej_cedula" />
                     </div>

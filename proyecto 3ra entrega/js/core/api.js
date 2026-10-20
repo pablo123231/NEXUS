@@ -9,7 +9,7 @@ async function renovarTokenCsrf() {
   const envoltorio = await respuesta.json();
   const estado = envoltorio && envoltorio.status === 'success' ? envoltorio.data : envoltorio;
   if (!respuesta.ok || !estado || !estado.autenticado || !estado.csrf) {
-    throw new Error('La sesion vencio. Volve a iniciar sesion.');
+    throw new Error(typeof t === 'function' ? t('La sesion vencio. Volve a iniciar sesion.') : 'La sesion vencio. Volve a iniciar sesion.');
   }
   if (typeof obtenerUsuarioActual === 'function' && typeof guardarUsuarioActual === 'function') {
     const usuario = obtenerUsuarioActual();
@@ -45,7 +45,7 @@ async function solicitarApi(ruta, opciones, reintentarCsrf = true) {
   try {
     datos = await respuesta.json();
   } catch (error) {
-    throw new Error('El servidor devolvio una respuesta invalida.');
+    throw new Error(typeof t === 'function' ? t('El servidor devolvio una respuesta invalida.') : 'El servidor devolvio una respuesta invalida.');
   }
   if (!respuesta.ok || (datos && datos.status === 'error')) {
     const mensaje = (datos && (datos.message || datos.error)) || 'No se pudo completar la solicitud.';
@@ -56,7 +56,7 @@ async function solicitarApi(ruta, opciones, reintentarCsrf = true) {
     if (respuesta.status === 401 && !/login\.php$/i.test(location.pathname)) {
       try { window.localStorage.removeItem('usuarioActual'); window.sessionStorage.removeItem('usuarioActual'); } catch (error) {}
     }
-    throw new Error(mensaje);
+    throw new Error(typeof t === 'function' ? t(mensaje) : mensaje);
   }
   return datos && datos.status === 'success' && Object.prototype.hasOwnProperty.call(datos, 'data')
     ? datos.data
@@ -78,10 +78,11 @@ async function solicitarLogin(identificador, contrasena, recordarme) {
   try {
     datos = await respuesta.json();
   } catch (error) {
-    throw new Error('El servidor devolvio una respuesta invalida.');
+    throw new Error(typeof t === 'function' ? t('El servidor devolvio una respuesta invalida.') : 'El servidor devolvio una respuesta invalida.');
   }
   if (!respuesta.ok || (datos && datos.status === 'error')) {
-    throw new Error((datos && (datos.message || datos.error)) || 'No se pudo iniciar sesion.');
+    const mensaje = (datos && (datos.message || datos.error)) || 'No se pudo iniciar sesion.';
+    throw new Error(typeof t === 'function' ? t(mensaje) : mensaje);
   }
   return datos && datos.status === 'success' ? datos.data : datos;
 }

@@ -17,6 +17,10 @@ function escaparHtml(valor) {
     .replace(/'/g, '&#39;');
 }
 
+function escaparAtributo(valor) {
+  return escaparHtml(valor);
+}
+
 function validarFormularioCliente(formulario, mostrarMensaje) {
   if (!formulario || typeof formulario.checkValidity !== 'function') {
     return true;
@@ -61,7 +65,9 @@ function manejarErrorCliente(error, mostrarMensaje, mensaje) {
 function normalizarTexto(valor) {
   return String(valor || '')
     .trim()
-    .toLowerCase();
+    .toLowerCase()
+    .normalize('NFD')
+    .replace(/[\u0300-\u036f]/g, '');
 }
 
 function normalizarCedula(valor) {

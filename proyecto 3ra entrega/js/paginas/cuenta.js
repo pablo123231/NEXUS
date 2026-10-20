@@ -25,7 +25,6 @@ if (protegerRuta()) {
     rol: document.getElementById('cuenta-rol'),
     area: document.getElementById('cuenta-area'),
     descripcion: document.getElementById('cuenta-descripcion'),
-    fechaRegistro: document.getElementById('cuenta-fecha-registro'),
     foto: document.getElementById('cuenta-foto'),
   };
   
@@ -51,9 +50,6 @@ if (protegerRuta()) {
     camposCuenta.rol.value = obtenerEtiquetaRol(usuarioActual.rol) || '';
     camposCuenta.area.value = usuarioActual.area || '';
     camposCuenta.descripcion.value = usuarioActual.descripcion || '';
-    camposCuenta.fechaRegistro.value = usuarioActual.fechaRegistro
-      ? formatearFechaHumana(usuarioActual.fechaRegistro)
-      : '';
   }
 
   camposCuenta.foto.addEventListener('change', async function () {

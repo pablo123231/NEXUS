@@ -16,7 +16,7 @@
     <div id="cabecera-superior"></div>
     <main class="portal-main regla-diseno-001">
       <section id="hero-home"></section>
-      <div id="mensaje-kanban"></div>
+      <div id="mensaje-kanban" aria-live="polite" aria-atomic="true"></div>
       <section class="calendar-toolbar regla-diseno-002" id="kanban-toolbar">
         <div><strong>Tablero del equipo técnico</strong><p>Organiza y asigna las tareas internas.</p></div>
         <button
@@ -198,9 +198,9 @@
     <script src="js/datos.js"></script>
     <script src="js/componentes.js?v=4.1.0"></script>
     <script src="js/traducciones.js"></script>
-    <script src="js/core/ui.js?v=modular-1"></script>
+    <script src="js/core/ui.js?v=4.2.2"></script>
     <script src="js/core/api.js?v=4.1.0"></script>
-    <script src="js/core/portal.js?v=4.1.0"></script>
+    <script src="js/core/portal.js?v=4.2.2"></script>
     <script src="js/modules/inventario.js?v=modular-1"></script>
     <script src="js/modules/usuarios.js?v=modular-1"></script>
     <script src="js/modules/tareas-planilla.js?v=4.1.0"></script>
@@ -211,9 +211,13 @@
       (async function iniciarHome() {
       if (protegerRuta()) {
         await verificarSesionEnServidor();
-        await Promise.all([obtenerUsuariosRegistrados(), obtenerResponsablesTareaRegistrados()]);
         const usuarioActual = obtenerUsuarioActual();
         const puedeVerKanban = usuarioPuedeAccederACalendarioTA(usuarioActual);
+        if (puedeVerKanban) {
+          await Promise.all([obtenerUsuariosRegistrados(), obtenerResponsablesTareaRegistrados()]);
+        } else {
+          await obtenerUsuariosRegistrados();
+        }
         const seccionKanban = document.getElementById('kanban-section');
         const toolbarKanban = document.getElementById('kanban-toolbar');
         const mensajeKanban = document.getElementById('mensaje-kanban');

@@ -8,3 +8,5 @@ cache/
 tmp/
 .DS_Store
 Thumbs.db
+.docx-work/
+**/seguridad/almacen/

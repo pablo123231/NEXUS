@@ -1,0 +1,13 @@
+<?php
+declare(strict_types=1);
+namespace Nexus\Domain\Prestamo;
+use Nexus\Domain\ValueObject\Cedula;
+interface PrestamoRepository
+{
+    public function listar(Cedula $usuario,bool $gestiona):array;
+    public function diasMaximos():int;
+    public function crear(array $datos,Cedula $usuario):array;
+    public function baja(int $id):bool;
+    public function comentar(int $id,string $comentario):bool;
+    public function cambiarEstado(int $id,string $estado):bool;
+}

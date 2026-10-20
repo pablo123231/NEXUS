@@ -1,4 +1,4 @@
-``<!doctype html>
+<!doctype html>
 <html lang="es" data-tema="claro" data-idioma="es">
   <head>
     <meta charset="UTF-8" />
@@ -33,11 +33,15 @@
             <small data-clave-omitir>ITI CEPT</small>
           </span>
         </a>
+        <div class="public-language segmented-control" role="group" aria-label="Cambiar idioma" data-clave-aria-label="cambiar_idioma">
+          <button type="button" data-idioma-opcion="es" aria-pressed="true">ES</button>
+          <button type="button" data-idioma-opcion="en" aria-pressed="false">EN</button>
+        </div>
       </header>
       <section class="public-hero regla-diseno-089">
         <div class="public-hero__content regla-diseno-090">
           <h1 class="public-hero__title regla-diseno-091" data-clave="sgrsi">SGRSI</h1>
-          <p class="public-hero__text regla-diseno-092">
+          <p class="public-hero__text regla-diseno-092" data-clave="portada_descripcion">
             El lugar para pedir recursos, coordinar servicios, atender soporte, mantener inventario
             y organizar el trabajo tecnico-administrativo del ITI.
           </p>
@@ -59,7 +63,7 @@
           </div>
         </div>
         <figure class="public-hero__visual">
-          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxhbmRtYXJrLWljb24gbHVjaWRlLWxhbmRtYXJrIj48cGF0aCBkPSJNMTAgMTh2LTciLz48cGF0aCBkPSJNMTEuMTE5IDIuMjA1YTIgMiAwIDAgMSAxLjc2MiAwbDcuODQgMy44NDZBLjUuNSAwIDAgMSAyMC41IDdoLTE3YS41LjUgMCAwIDEtLjIyLS45NDl6Ii8+PHBhdGggZD0iTTE0IDE4di03Ii8+PHBhdGggZD0iTTE4IDE4di03Ii8+PHBhdGggZD0iTTMgMjJoMTgiLz48cGF0aCBkPSJNNiAxOHYtNyIvPjwvc3ZnPg==" alt="Institucion educativa" />
+          <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0IiBmaWxsPSJub25lIiBzdHJva2U9ImN1cnJlbnRDb2xvciIgc3Ryb2tlLXdpZHRoPSIyIiBzdHJva2UtbGluZWNhcD0icm91bmQiIHN0cm9rZS1saW5lam9pbj0icm91bmQiIGNsYXNzPSJsdWNpZGUgbHVjaWRlLWxhbmRtYXJrLWljb24gbHVjaWRlLWxhbmRtYXJrIj48cGF0aCBkPSJNMTAgMTh2LTciLz48cGF0aCBkPSJNMTEuMTE5IDIuMjA1YTIgMiAwIDAgMSAxLjc2MiAwbDcuODQgMy44NDZBLjUuNSAwIDAgMSAyMC41IDdoLTE3YS41LjUgMCAwIDEtLjIyLS45NDl6Ii8+PHBhdGggZD0iTTE0IDE4di03Ii8+PHBhdGggZD0iTTE4IDE4di03Ii8+PHBhdGggZD0iTTMgMjJoMTgiLz48cGF0aCBkPSJNNiAxOHYtNyIvPjwvc3ZnPg==" alt="Institución educativa" data-clave-alt="institucion_educativa" />
         </figure>
       </section>
       <section class="public-context regla-diseno-094" id="contexto" aria-label="Contexto de la pagina" data-clave-aria-label="contexto_de_la_pagina">
@@ -153,7 +157,7 @@
               required
              data-clave-placeholder="soporte_publico_placeholder"></textarea>
           </div>
-          <div id="mensaje-soporte-publico"></div>
+          <div id="mensaje-soporte-publico" aria-live="polite" aria-atomic="true"></div>
           <div class="form-actions regla-diseno-035">
             <button
               class="boton boton--primary regla-diseno-005"

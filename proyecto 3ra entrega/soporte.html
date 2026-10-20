@@ -263,8 +263,8 @@
               let acciones = '';
               if (puedeGestionar) {
                 acciones = crearBotonesCambioEstado(tickets[i], opcionesEstadoTicket);
-                if (tickets[i].estado === 'Resuelto' || tickets[i].estado === 'Denegado') {
-                  acciones += '<label class="input-stack"><span>Comentario asociado</span><textarea class="textarea-input" data-comentario-ticket="' + escaparHtml(tickets[i].id) + '" placeholder="Escribi un comentario sobre la resolucion">' + escaparHtml(tickets[i].comentarioResolucion || '') + '</textarea></label><button class="boton boton--outline boton--sm" data-guardar-comentario-ticket="' + escaparHtml(tickets[i].id) + '">Guardar comentario</button>';
+                if ((tickets[i].estado === 'Resuelto' || tickets[i].estado === 'Denegado') && !tickets[i].comentarioResolucion) {
+                  acciones += '<div class="resolution-comment"><label class="input-stack"><span>Comentario de cierre</span><textarea class="textarea-input" data-comentario-ticket="' + escaparHtml(tickets[i].id) + '" placeholder="Deja una aclaracion final para este ticket"></textarea></label><button class="boton boton--primary boton--sm" data-guardar-comentario-ticket="' + escaparHtml(tickets[i].id) + '">Guardar comentario</button></div>';
                 }
                 acciones += '<button class="boton boton--outline-danger boton--sm" data-baja-ticket="' + escaparHtml(tickets[i].id) + '">Dar de baja</button>';
               }
@@ -280,9 +280,10 @@
             const id = botonComentario.getAttribute('data-guardar-comentario-ticket');
             const campo = document.querySelector('[data-comentario-ticket="' + CSS.escape(id) + '"]');
             try {
+              botonComentario.disabled = true;
               await guardarComentarioTicket(id, campo ? campo.value : '');
               await renderLista();
-            } catch (error) { manejarErrorCliente(error); }
+            } catch (error) { botonComentario.disabled = false; manejarErrorCliente(error); }
             return;
           }
           const botonBaja = evento.target.closest('[data-baja-ticket]');

@@ -43,9 +43,10 @@ async function obtenerLugaresDisponibles() {
 
 function normalizarEquipoInventario(equipo) {
   const tipo = obtenerTipoEquipoInventario(equipo && equipo.tipo);
+  const tipoReal = String(equipo && equipo.tipo ? equipo.tipo : tipo.valor).trim();
   return Object.assign({}, equipo, {
-    tipo: tipo.valor,
-    tipoEtiqueta: equipo.tipoEtiqueta || tipo.etiqueta,
+    tipo: tipoReal,
+    tipoEtiqueta: equipo.tipoEtiqueta || tipoReal || tipo.etiqueta,
     icono: equipo.icono || tipo.icono,
     estado: equipo.estado || 'Activo',
     actualizado: equipo.actualizado || 'hoy',
@@ -334,16 +335,10 @@ async function guardarNuevoEquipoInventario(datos) {
     return { ok: false, mensaje: 'Tu perfil no tiene permiso para dar de alta equipos.' };
   }
   const tipoValor = String(datos && datos.tipo ? datos.tipo : '').trim();
-  let tipo = null;
-  for (let i = 0; i < tiposDeEquipoInventario.length; i++) {
-    if (tiposDeEquipoInventario[i].valor === tipoValor) {
-      tipo = tiposDeEquipoInventario[i];
-      break;
-    }
-  }
-  if (!tipo) {
+  if (!tipoValor) {
     return { ok: false, mensaje: 'Elegí un tipo de equipo valido.' };
   }
+  const tipo = obtenerTipoEquipoInventario(tipoValor);
   const seccion = await obtenerSeccionInventarioPorId(datos && datos.seccionId);
   if (!seccion) {
     return { ok: false, mensaje: 'Elegí una seccion valida.' };
@@ -354,7 +349,7 @@ async function guardarNuevoEquipoInventario(datos) {
     method: 'POST',
     body: JSON.stringify({
       nombre: nombre,
-      tipo: tipo.valor,
+      tipo: tipoValor,
       seccionId: seccion.id,
       estado: 'Activo',
       observaciones: String(datos && datos.observaciones ? datos.observaciones : '').trim(),
@@ -364,8 +359,8 @@ async function guardarNuevoEquipoInventario(datos) {
   const nuevoEquipo = {
     id: respuesta.id,
     nombre: nombre,
-    tipo: tipo.valor,
-    tipoEtiqueta: tipo.etiqueta,
+    tipo: tipoValor,
+    tipoEtiqueta: tipoValor,
     icono: tipo.icono,
     seccionId: seccion.id,
     seccion: seccion.nombre,
