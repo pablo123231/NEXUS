@@ -31,7 +31,7 @@ $prestamos=contenido($raiz.'prestamos.html');
 verificarCorreccion(str_contains($prestamos,"tipo=categoria_tecnologica"),'Prestamos no usa el catalogo compartido.');
 verificarCorreccion(str_contains($prestamos,'Marcar como devuelto'),'Prestamos no ofrece la devolucion de un prestamo aprobado.');
 verificarCorreccion(!str_contains($prestamos,'Marcar pendiente'),'Prestamos conserva una transicion regresiva a pendiente.');
-verificarCorreccion(str_contains($prestamos,'cantidadReservada')||str_contains($prestamos,'Reservados:'),'Prestamos no informa cantidades reservadas y disponibles.');
+verificarCorreccion(str_contains($prestamos,"t('Reservados')")&&str_contains($prestamos,"t('Disponibles')"),'Prestamos no informa cantidades reservadas y disponibles traducibles.');
 verificarCorreccion(str_contains($prestamos,'!prestamos[i].comentarioResolucion'),'El comentario de prestamo guardado sigue siendo editable.');
 $prestamoRepo=contenido($raiz.'src/Infrastructure/Persistence/PdoPrestamoRepository.php');
 verificarCorreccion(str_contains($prestamoRepo,'fecha_devolucion_real'),'La devolucion no registra su fecha real.');
@@ -40,6 +40,11 @@ verificarCorreccion(str_contains($prestamoRepo,"'Solicitado'=>['Activo','Cancela
 $administracion=contenido($raiz.'administracion.html');
 verificarCorreccion(str_contains($administracion,'data-reactivar'),'Administracion no permite reactivar catalogos.');
 verificarCorreccion(!str_contains($administracion,'data-nuevo="categoria_prestamo"'),'Administracion conserva un segundo catalogo de prestamos.');
+verificarCorreccion(str_contains($administracion,'data-clave="nuevo_registro"'),'El nuevo formulario de catalogos no esta conectado al idioma actual.');
+
+$traducciones=contenido($raiz.'js/traducciones.js');
+verificarCorreccion(str_contains($traducciones,'"marcar_como_devuelto": "Mark as returned"'),'Falta la traduccion inglesa de la devolucion.');
+verificarCorreccion(str_contains($traducciones,'"no_hay_equipos_disponibles": "No equipment available"'),'Falta la traduccion inglesa de disponibilidad.');
 
 $cuenta=contenido($raiz.'cuenta.html');
 verificarCorreccion(!str_contains($cuenta,'Actividad reciente'),'Cuenta conserva la actividad reciente.');

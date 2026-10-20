@@ -810,4 +810,72 @@ Object.assign(traduccionesPortal.en, {
   "cedula_ocho_numeros": "The ID number must contain exactly 8 digits"
 });
 
+Object.assign(traduccionesPortal.es, {
+  "aprobar": "Aprobar",
+  "denegar": "Denegar",
+  "devuelto": "Devuelto",
+  "marcar_como_devuelto": "Marcar como devuelto",
+  "reservados": "Reservados",
+  "disponibles": "Disponibles",
+  "cantidad_de": "Cantidad de",
+  "no_hay_equipos_disponibles": "No hay equipos disponibles",
+  "no_hay_equipos_disponibles_categoria": "No hay equipos disponibles para esta categoria.",
+  "primero_categoria_equipos": "Primero elegi una categoria para ver los equipos disponibles.",
+  "comentario": "Comentario",
+  "comentario_asociado": "Comentario asociado",
+  "escribir_comentario_prestamo": "Escribi un comentario sobre el prestamo",
+  "guardar_comentario": "Guardar comentario",
+  "dar_de_baja": "Dar de baja",
+  "devolucion_prevista": "Devolucion prevista",
+  "devuelto_fecha": "Devuelto",
+  "jornada": "Jornada",
+  "lugar": "Lugar",
+  "solicitante": "Solicitante"
+  ,"nuevo_registro": "Nuevo registro"
+  ,"agregar_registro": "Agregar registro"
+  ,"editar_registro": "Editar registro"
+  ,"nombre": "Nombre"
+  ,"guardar": "Guardar"
+  ,"cancelar": "Cancelar"
+  ,"cerrar": "Cerrar"
+  ,"registro_creado": "Registro creado."
+  ,"registro_actualizado": "Registro actualizado."
+  ,"registro_baja": "Registro dado de baja."
+  ,"registro_reactivado": "Registro habilitado nuevamente."
+});
+
+Object.assign(traduccionesPortal.en, {
+  "aprobar": "Approve",
+  "denegar": "Deny",
+  "devuelto": "Returned",
+  "marcar_como_devuelto": "Mark as returned",
+  "reservados": "Reserved",
+  "disponibles": "Available",
+  "cantidad_de": "Quantity of",
+  "no_hay_equipos_disponibles": "No equipment available",
+  "no_hay_equipos_disponibles_categoria": "There is no equipment available for this category.",
+  "primero_categoria_equipos": "Choose a category first to see available equipment.",
+  "comentario": "Comment",
+  "comentario_asociado": "Associated comment",
+  "escribir_comentario_prestamo": "Write a comment about the loan",
+  "guardar_comentario": "Save comment",
+  "dar_de_baja": "Deactivate",
+  "devolucion_prevista": "Expected return",
+  "devuelto_fecha": "Returned",
+  "jornada": "Shift",
+  "lugar": "Location",
+  "solicitante": "Requester"
+  ,"nuevo_registro": "New record"
+  ,"agregar_registro": "Add record"
+  ,"editar_registro": "Edit record"
+  ,"nombre": "Name"
+  ,"guardar": "Save"
+  ,"cancelar": "Cancel"
+  ,"cerrar": "Close"
+  ,"registro_creado": "Record created."
+  ,"registro_actualizado": "Record updated."
+  ,"registro_baja": "Record deactivated."
+  ,"registro_reactivado": "Record enabled again."
+});
+
 window.traducciones = traduccionesPortal;

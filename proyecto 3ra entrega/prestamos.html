@@ -109,8 +109,8 @@
     </main>
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="js/datos.js"></script>
-    <script src="js/componentes.js?v=4.2.4"></script>
-    <script src="js/traducciones.js"></script>
+    <script src="js/componentes.js?v=4.2.5"></script>
+    <script src="js/traducciones.js?v=4.2.5"></script>
     <script src="js/core/ui.js?v=modular-1"></script>
     <script src="js/core/api.js?v=4.1.0"></script>
     <script src="js/core/portal.js?v=4.1.0"></script>
@@ -153,14 +153,14 @@
         const opcionesPendientePrestamo = [
           {
             estado: 'Aprobado',
-            etiqueta: 'Aprobar',
+            etiqueta: t('Aprobar'),
             clase: 'boton--primary',
             atributoId: 'data-update-prestamo',
             atributoEstado: 'data-prestamo-status',
           },
           {
             estado: 'Denegado',
-            etiqueta: 'Denegar',
+            etiqueta: t('Denegar'),
             clase: 'boton--outline-danger',
             atributoId: 'data-update-prestamo',
             atributoEstado: 'data-prestamo-status',
@@ -169,7 +169,7 @@
         const opcionesAprobadoPrestamo = [
           {
             estado: 'Devuelto',
-            etiqueta: 'Marcar como devuelto',
+            etiqueta: t('Marcar como devuelto'),
             clase: 'boton--primary',
             atributoId: 'data-update-prestamo',
             atributoEstado: 'data-prestamo-status',
@@ -237,7 +237,7 @@
           const categoria = selectCategoria.value;
           if (!categoria) {
             contenedorRecursos.innerHTML =
-              '<div class="empty-inline regla-diseno-043">Primero elegi una categoria para ver los equipos disponibles.</div>';
+              '<div class="empty-inline regla-diseno-043">' + t('Primero elegi una categoria para ver los equipos disponibles.') + '</div>';
             return;
           }
           const categoriaNormalizada = normalizarCategoriaPrestamo(categoria);
@@ -246,7 +246,7 @@
           });
           if (recursos.length === 0) {
             contenedorRecursos.innerHTML =
-              '<div class="empty-inline regla-diseno-043">No hay equipos disponibles para esta categoria.</div>';
+              '<div class="empty-inline regla-diseno-043">' + t('No hay equipos disponibles para esta categoria.') + '</div>';
             return;
           }
           let html = '';
@@ -257,10 +257,10 @@
             const total = Number(recurso.cantidad);
             const reservado = Math.max(total - disponible, 0);
             if (recurso.estado !== 'Activo' || disponible < 1) {
-              html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" disabled /> <span>${escaparHtml(recurso.nombre)}</span> </label> <div class="loan-resource-option__qty regla-diseno-015"><span>Total: ${escaparHtml(total)} · Reservados: ${escaparHtml(reservado)}</span><strong>No hay equipos disponibles</strong></div> </div> `;
+              html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" disabled /> <span>${escaparHtml(recurso.nombre)}</span> </label> <div class="loan-resource-option__qty regla-diseno-015"><span>${escaparHtml(t('Total'))}: ${escaparHtml(total)} · ${escaparHtml(t('Reservados'))}: ${escaparHtml(reservado)}</span><strong>${escaparHtml(t('No hay equipos disponibles'))}</strong></div> </div> `;
               continue;
             }
-            html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" value="${escaparHtml(recurso.nombre)}" data-equipo-id="${escaparHtml(recurso.id)}" data-loan-resource /> <span>${escaparHtml(recurso.nombre)}</span> </label> <label class="loan-resource-option__qty regla-diseno-015"> <span>Total: ${escaparHtml(total)} · Reservados: ${escaparHtml(reservado)} · Disponibles: ${escaparHtml(disponible)}</span> <input class="text-input regla-diseno-026" type="number" min="1" max="${escaparHtml(disponible)}" placeholder="0" disabled data-loan-quantity aria-label="Cantidad de ${escaparHtml(recurso.nombre)}" /> </label> </div> `;
+            html += ` <div class="loan-resource-option regla-diseno-107"> <label class="loan-resource-option__check regla-diseno-015" for="${id}"> <input id="${id}" type="checkbox" value="${escaparHtml(recurso.nombre)}" data-equipo-id="${escaparHtml(recurso.id)}" data-loan-resource /> <span>${escaparHtml(recurso.nombre)}</span> </label> <label class="loan-resource-option__qty regla-diseno-015"> <span>${escaparHtml(t('Total'))}: ${escaparHtml(total)} · ${escaparHtml(t('Reservados'))}: ${escaparHtml(reservado)} · ${escaparHtml(t('Disponibles'))}: ${escaparHtml(disponible)}</span> <input class="text-input regla-diseno-026" type="number" min="1" max="${escaparHtml(disponible)}" placeholder="0" disabled data-loan-quantity aria-label="${escaparHtml(t('Cantidad de'))} ${escaparHtml(recurso.nombre)}" /> </label> </div> `;
           }
           contenedorRecursos.innerHTML = html;
         }
@@ -373,10 +373,10 @@
                 }
                 if (prestamos[i].estado === 'Aprobado' || prestamos[i].estado === 'Denegado' || prestamos[i].estado === 'Devuelto') {
                   if (!prestamos[i].comentarioResolucion) {
-                    acciones += '<label class="input-stack"><span>Comentario asociado</span><textarea class="textarea-input" data-comentario-prestamo="' + escaparHtml(prestamos[i].id) + '" placeholder="Escribi un comentario sobre el prestamo"></textarea></label><button class="boton boton--outline boton--sm" data-guardar-comentario-prestamo="' + escaparHtml(prestamos[i].id) + '">Guardar comentario</button>';
+                    acciones += '<label class="input-stack"><span>' + escaparHtml(t('Comentario asociado')) + '</span><textarea class="textarea-input" data-comentario-prestamo="' + escaparHtml(prestamos[i].id) + '" placeholder="' + escaparAtributo(t('Escribi un comentario sobre el prestamo')) + '"></textarea></label><button class="boton boton--outline boton--sm" data-guardar-comentario-prestamo="' + escaparHtml(prestamos[i].id) + '">' + escaparHtml(t('Guardar comentario')) + '</button>';
                   }
                 }
-                acciones += '<button class="boton boton--outline-danger boton--sm" data-baja-prestamo="' + escaparHtml(prestamos[i].id) + '">Dar de baja</button>';
+                acciones += '<button class="boton boton--outline-danger boton--sm" data-baja-prestamo="' + escaparHtml(prestamos[i].id) + '">' + escaparHtml(t('Dar de baja')) + '</button>';
               }
               html += crearTarjetaDePrestamo(prestamos[i], acciones);
             }
