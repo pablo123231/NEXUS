@@ -1,6 +1,6 @@
 # Sistema de ciberseguridad de NEXUS — versión 4.0
 
-> Esta edición integra los controles de la tercera entrega sobre la base funcional `proyecto 2da entrega 3.0`. La migración oficial es `migration_4_0.sql`. Los scripts de firewall, respaldo y configuración de Apache son herramientas operativas opcionales: deben revisarse y ajustarse al entorno antes de ejecutarlos.
+> Esta edición integra los controles de la tercera entrega. `database.sql` contiene el esquema final completo. Las migraciones históricas están archivadas en `database old` y no se necesitan para una instalación nueva. Los scripts de firewall, respaldo y configuración de Apache son herramientas operativas opcionales: deben revisarse y ajustarse al entorno antes de ejecutarlos.
 
 Este documento explica qué defensa responde a cada ficha de la auditoría (F-01 a F-11 y la nota sobre HTTPS), qué se agregó en la 3ra entrega y cómo volver a probarlo.
 
@@ -62,7 +62,7 @@ La identidad sale de la **sesión del servidor**, y cada endpoint controla el ro
 | **F-02** Escalada de privilegios / control de acceso roto | La API no pedía sesión; cualquiera podía crear un administrador o editar a otros mandando otra cédula | Todo se deniega por defecto (401). Cada endpoint exige su rol (`segExigirRol`), y la cédula sale de la sesión (`cedulaPropia`). El autorregistro siempre crea un **Solicitante**. Un solicitante solo ve lo suyo, y el rol se relee de la base en cada petición. | `api/*.php`, `seguridad/bootstrap.php` |
 | **F-03** Contraseñas en texto plano | `contrasena` guardada tal cual | **Argon2id** (o bcrypt). Las cuentas antiguas se convierten al primer ingreso o con `migrar_contrasenas.php`. La política exige de 8 a 128 caracteres, con mayúscula, minúscula y número, y rechaza las contraseñas comunes. **Nuevo:** el usuario puede cambiar su contraseña desde *Cuenta*. | `seguridad/migrar_contrasenas.php`, `api/seguridad_cuenta.php` |
 | **F-04** Sesión insegura | JSON en `localStorage`, editable y sin vencimiento | Sesión PHP con cookie `HttpOnly`, `SameSite=Strict`, `Secure` y `__Host-`, y modo estricto. El ID se regenera al ingresar y cada 15 min. Vence a los 30 min de inactividad o a las 8 h. Está atada a la huella del navegador, y tiene token **CSRF** y verificación de `Origin`. **Nuevo:** versión de sesión, para cerrar todas las sesiones a la vez. | `seguridad/bootstrap.php`, `js/core/api.js` |
-| **F-05** Inyección SQL | Ya resistía (PDO preparado) | Sin *prepared statements* emuladas, y con un usuario de BD sin DROP, ALTER ni FILE. | `config.example.php`, `seguridad/migracion.sql` |
+| **F-05** Inyección SQL | Ya resistía (PDO preparado) | Sin *prepared statements* emuladas, y con un usuario de BD sin DROP, ALTER ni FILE. | `config.example.php`, `database old/migracion_seguridad.sql` |
 | **F-06** XSS | Ya resistía (`strip_tags` y escapado) | **Content-Security-Policy** sin `'unsafe-inline'` en scripts: un script inyectado en el HTML no se ejecuta. `connect-src 'self'` impide mandar datos a otro servidor, y la cookie `HttpOnly` impide robar la sesión. | `.htaccess`, `js/paginas/` |
 | **F-07** Subida de archivos | Ya resistía (se validaba el MIME real) | La foto va a la cuenta de la sesión. Se valida con `is_uploaded_file` y se **recodifica** con GD. En `uploads/perfiles` solo se sirven `<hash>.jpg/png/webp`, nunca se ejecuta PHP y se aplica `CSP sandbox`. | `api/foto_perfil.php`, `uploads/perfiles/.htaccess` |
 | **F-08** Phishing | Solo teórico | **Nuevo:** verificación en dos pasos (obligatoria para admins) con códigos de un solo uso, historial de accesos, cerrar todas las sesiones, cambio de contraseña, aviso del último ingreso y dirección visible en el login. Se mantiene: `frame-ancestors 'none'`, `X-Frame-Options: DENY`, `form-action 'self'`, HTTPS con HSTS, cookies `SameSite=Strict` y bitácora de cada ingreso. | `login.php`, `seguridad/totp.php`, `api/seguridad_cuenta.php`, `js/modules/seguridad-cuenta.js` |
@@ -73,7 +73,7 @@ La identidad sale de la **sesión del servidor**, y cada endpoint controla el ro
 
 ## Instalación
 
-1. Importá `database.sql`, aplicá las migraciones anteriores y después ejecutá `migration_4_0.sql` en phpMyAdmin. Esta migración agrega las tablas de auditoría y las columnas de sesión/segundo factor sin borrar datos.
+1. Importá únicamente `database.sql` en phpMyAdmin. Ya contiene las tablas de auditoría y las columnas de sesión y segundo factor.
 2. Copiá `config.example.php` a `config.php` y poné la clave de `sgrsi_app`.
 3. Convertí las contraseñas existentes:
    ```bash
@@ -92,7 +92,7 @@ La identidad sale de la **sesión del servidor**, y cada endpoint controla el ro
    schtasks /Create /SC DAILY /ST 03:00 /TN "NEXUS Integridad" /TR "C:\xampp\php\php.exe \"C:\xampp\htdocs\proyecto 2da entrega 4.0\seguridad\integridad.php\" verificar"
    ```
 7. **HTTPS en XAMPP:** generá un certificado con `mkcert` (para la LAN) o con Let's Encrypt (con dominio público), configuralo en `C:\xampp\apache\conf\extra\httpd-ssl.conf` y reiniciá Apache.
-8. Poné una contraseña al usuario root de MySQL (última línea de `migracion.sql`).
+8. Poné una contraseña al usuario root de MySQL. El ejemplo histórico se conserva en `database old/migracion_seguridad.sql`.
 9. **Administradores:** en el primer ingreso, el sistema muestra una clave para cargar en la app autenticadora del teléfono y pide el primer código. Desde ese momento, cada ingreso pide contraseña y código.
 
 ## Phishing

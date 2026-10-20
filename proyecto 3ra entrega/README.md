@@ -1,4 +1,4 @@
-# NEXUS — 2da entrega 4.0
+# NEXUS — 3ra entrega
 
 Sistema de Gestión de Recursos y Servicios de Informática del ITI CEPT. Permite pedir recursos, coordinar servicios, atender soporte, mantener inventario y organizar el trabajo técnico-administrativo.
 
@@ -12,11 +12,12 @@ Sistema de Gestión de Recursos y Servicios de Informática del ITI CEPT. Permit
 
 1. Clonar el repositorio NEXUS dentro de `htdocs`.
 
-2. Para una instalación nueva, importar `database.sql` y luego
-   `migration_2_0.sql`, `migration_3_0.sql` y `migration_4_0.sql` desde phpMyAdmin.
+2. Importar únicamente `database.sql` desde phpMyAdmin. Este archivo contiene
+   toda la estructura, relaciones, configuración y datos necesarios para dejar
+   la base en el estado actual del sistema.
 
-   Si ya existe la base de la versión 3.0, conservarla e importar solamente
-   `migration_4_0.sql`.
+   La carpeta `database old` conserva las migraciones históricas como referencia.
+   No deben ejecutarse después de `database.sql`.
 
 3. Copiar la configuración de ejemplo:
 
@@ -26,7 +27,7 @@ Sistema de Gestión de Recursos y Servicios de Informática del ITI CEPT. Permit
 
 4. Iniciar Apache y MySQL.
 
-5. Abrir `http://localhost/proyecto%202da%20entrega%204.0/`.
+5. Abrir `http://localhost/proyecto%203ra%20entrega/`.
 
 ## Seguridad y API en la versión 4.0
 

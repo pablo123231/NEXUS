@@ -27,7 +27,7 @@ La versión 4.0 se construyó copiando la versión 3.0 y aplicando selectivament
 - La recuperación de contraseña continúa creando un ticket. Al resolverlo se genera una contraseña temporal, se obliga a cambiarla y se invalidan las sesiones anteriores.
 - Se conservaron el enlace y el flujo de solicitud de cambio de rol.
 - La foto de perfil solo puede modificarse para la identidad de la sesión.
-- La migración oficial es `migration_4_0.sql`; no se ejecutan cambios de esquema durante una petición web.
+- La migración histórica se conserva en `database old/migration_4_0.sql`; `database.sql` ya contiene su resultado y no se ejecutan cambios de esquema durante una petición web.
 
 ## Decisión sobre CSP
 
@@ -37,7 +37,7 @@ La entrega recibida eliminaba todos los scripts internos y podía usar `script-s
 
 1. Copiar la carpeta al servidor web.
 2. Configurar `config.php` localmente; el archivo está excluido de Git.
-3. Ejecutar `migration_4_0.sql` sobre la base ya migrada a 3.0.
+3. En instalaciones nuevas, importar solamente `database.sql`. Para actualizar una base 3.0 antigua, consultar `database old/migration_4_0.sql`.
 4. Verificar que PHP tenga habilitada la extensión GD para subir fotos.
 5. Probar el ingreso de un administrador y completar el alta del segundo factor.
 6. Configurar HTTPS antes de publicar fuera de localhost.
