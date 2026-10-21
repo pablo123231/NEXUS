@@ -52,7 +52,12 @@ function obtenerTemaActual() {
   } catch (error) {
     temaGuardado = '';
   }
-  return temaGuardado === 'oscuro' ? 'oscuro' : 'claro';
+  if (temaGuardado === 'oscuro' || temaGuardado === 'claro') {
+    return temaGuardado;
+  }
+  return window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches
+    ? 'oscuro'
+    : 'claro';
 }
 
 function obtenerIdiomaActual() {
@@ -105,7 +110,8 @@ function aplicarTema(tema) {
 
 
 function aplicarTemaGuardado() {
-  aplicarTema(obtenerTemaActual());
+  sincronizarAtributoDeTema(obtenerTemaActual());
+  sincronizarBotonesDeTema();
 }
 
 
@@ -116,6 +122,22 @@ function alternarTema() {
 
 
 const traducciones = window.traducciones || { es: {}, en: {} };
+
+const motorI18n = window.i18next || null;
+if (motorI18n) {
+  motorI18n.init({
+    lng: obtenerIdiomaActual(),
+    fallbackLng: 'es',
+    supportedLngs: ['es', 'en'],
+    initAsync: false,
+    resources: {
+      es: { translation: traducciones.es || {} },
+      en: { translation: traducciones.en || {} },
+    },
+    interpolation: { escapeValue: false },
+    returnNull: false,
+  });
+}
 
 
 function normalizarClaveTraduccion(texto) {
@@ -195,8 +217,34 @@ function obtenerClaveI18nPorTexto(texto) {
 
 function obtenerTraduccionPorClave(clave, idioma) {
   const idiomaNormalizado = idioma === 'en' ? 'en' : 'es';
+  if (motorI18n) {
+    const traduccionMotor = motorI18n.getFixedT(idiomaNormalizado)(clave, { defaultValue: '' });
+    if (traduccionMotor) {
+      return traduccionMotor;
+    }
+  }
   const tabla = traducciones[idiomaNormalizado] || traducciones.es;
   return tabla[clave] || '';
+}
+
+function tClave(clave, parametros) {
+  const plantilla = obtenerTraduccionPorClave(clave, obtenerIdiomaActual()) ||
+    obtenerTraduccionPorClave(clave, 'es') || clave;
+  const valores = parametros || {};
+  return plantilla.replace(/\{\{\s*([\w.-]+)\s*\}\}/g, function (_, nombre) {
+    return Object.prototype.hasOwnProperty.call(valores, nombre) ? String(valores[nombre]) : '';
+  });
+}
+
+const CLAVES_ESTADO_TAREA = {
+  'Pendiente': 'pendiente',
+  'En curso': 'en_curso',
+  'En revision': 'en_revision',
+  'Completado': 'completado',
+};
+
+function traducirEstadoTarea(estado) {
+  return tClave(CLAVES_ESTADO_TAREA[estado] || normalizarClaveTraduccion(estado));
 }
 
 
@@ -490,6 +538,9 @@ function aplicarIdioma(idioma) {
     window.localStorage.setItem(CLAVES_STORAGE.idioma, idiomaNormalizado);
   } catch (error) {
     /* sin acceso a localStorage directo */
+  }
+  if (motorI18n) {
+    motorI18n.changeLanguage(idiomaNormalizado);
   }
   aplicarIdiomaActualAlDom();
 }

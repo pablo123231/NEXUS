@@ -26,6 +26,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="js/datos.js"></script>
     <script src="js/componentes.js?v=baja-modal-cancel-2"></script>
+    <script src="js/vendor/i18next-26.5.3.min.js"></script>
     <script src="js/traducciones.js"></script>
     <script src="js/core/ui.js?v=modular-1"></script>
     <script src="js/core/api.js?v=4.0.1"></script>
@@ -49,7 +50,7 @@
           ]),
         );
         mostrarEn('cabecera-de-pagina', crearCabeceraDePagina({ titulo: 'Todos los equipos' }));
-        const seccionesInventario = await obtenerSeccionesInventario();
+        let seccionesInventario = await obtenerSeccionesInventario();
         let equipoTrasladoSeleccionado = null;
         
         const filtrosHtml =
@@ -105,7 +106,12 @@
           return opciones;
         }
         async function abrirModalTrasladoEquipo(equipoId) {
-          equipoTrasladoSeleccionado = await obtenerEquipoInventarioPorId(equipoId);
+          const resultados = await Promise.all([
+            obtenerEquipoInventarioPorId(equipoId),
+            obtenerSeccionesInventario(),
+          ]);
+          equipoTrasladoSeleccionado = resultados[0];
+          seccionesInventario = resultados[1];
           if (!equipoTrasladoSeleccionado) {
             mostrarMensajeEquipos('No encontramos ese equipo.', 'error');
             return;
@@ -114,9 +120,11 @@
             equipoTrasladoSeleccionado.nombre + ' | Seccion actual: ' + equipoTrasladoSeleccionado.seccion;
           const selectDestino = document.getElementById('equipo-seccion-destino-lista');
           selectDestino.innerHTML = opcionesSeccionesDestinoTraslado(equipoTrasladoSeleccionado);
-          inicializarSelectsPersonalizados(selectDestino);
+          sincronizarSelectPersonalizado(selectDestino);
           const botonConfirmar = document.querySelector('[data-confirm-move-equipo]');
-          botonConfirmar.disabled = seccionesInventario.length < 2;
+          botonConfirmar.disabled = !Array.from(selectDestino.options).some(function (opcion) {
+            return opcion.value !== '' && !opcion.disabled;
+          });
           abrirModal('modal-traslado-equipo-lista');
         }
         async function confirmarTrasladoEquipo() {

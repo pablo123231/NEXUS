@@ -250,3 +250,16 @@ Durante la transición, crear adaptadores en la frontera de la API para converti
 - i18next, Interpolation: https://www.i18next.com/translation-function/interpolation
 - MDN, `color-scheme`: https://developer.mozilla.org/en-US/docs/Web/CSS/color-scheme
 - MDN, `prefers-color-scheme`: https://developer.mozilla.org/en-US/docs/Web/CSS/@media/prefers-color-scheme
+
+## Registro de implementación
+
+Aplicado el 20/10/2026 sobre `proyecto 3ra entrega`:
+
+- Se incorporó i18next 26.5.3 como recurso local versionado, sin dependencia de CDN ni de Internet durante el uso en la LAN.
+- El núcleo mantiene compatibilidad temporal con `data-clave`, pero toda función nueva puede traducir por clave estable mediante `tClave(clave, parametros)`.
+- Los estados funcionales del Kanban permanecen en español como datos de dominio y su presentación usa un mapa explícito de claves. Se agregaron `en_curso` y `completado` en ambos idiomas.
+- El tema de Cuenta dejó de imponer colores oscuros literales y ahora consume los tokens semánticos globales. Sin preferencia guardada se respeta `prefers-color-scheme`; una selección manual queda persistida.
+- El traslado desde la lista vuelve a consultar las secciones al abrir el modal, excluye la actual, sincroniza el selector visual y deshabilita la confirmación si no existe un destino válido.
+- El historial entrega `autor` como nombre visible y `autorId` como identidad de filtrado. La cédula ya no se presenta en el selector.
+- Seguridad de la cuenta se reorganizó como bloque adaptable y Registro conserva un único borde por campo.
+- Se amplió la auditoría para exigir el motor local en todas las pantallas y los cuatro estados bilingües del Kanban.

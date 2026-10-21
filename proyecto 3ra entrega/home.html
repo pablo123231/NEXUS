@@ -197,6 +197,7 @@
     <script src="https://unpkg.com/lucide@latest/dist/umd/lucide.min.js"></script>
     <script src="js/datos.js?v=4.2.3"></script>
     <script src="js/componentes.js?v=4.2.3"></script>
+    <script src="js/vendor/i18next-26.5.3.min.js"></script>
     <script src="js/traducciones.js?v=4.2.3"></script>
     <script src="js/core/ui.js?v=4.2.2"></script>
     <script src="js/core/api.js?v=4.1.0"></script>
@@ -301,7 +302,7 @@
                 tareasHtml =
                   '<div class="kanban-empty regla-diseno-028">Sin tareas por ahora</div>';
               }
-              html += ` <section class="kanban-column regla-diseno-029" data-kanban-drop="${escaparHtml(estado)}"> <header class="kanban-column__header regla-diseno-030"> <span>${escaparHtml(estado)}</span> <strong>${cantidad}</strong> </header> <div class="kanban-column__body regla-diseno-031">${tareasHtml}</div> </section> `;
+              html += ` <section class="kanban-column regla-diseno-029" data-kanban-drop="${escaparHtml(estado)}"> <header class="kanban-column__header regla-diseno-030"> <span>${escaparHtml(traducirEstadoTarea(estado))}</span> <strong>${cantidad}</strong> </header> <div class="kanban-column__body regla-diseno-031">${tareasHtml}</div> </section> `;
             }
             mostrarEn('kanban-tareas', html);
           }

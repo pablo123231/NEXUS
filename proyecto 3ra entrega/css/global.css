@@ -6235,3 +6235,27 @@
 }
 /* Ajustes funcionales y visuales 4.2 */
 .account-role-callout{display:flex;align-items:center;justify-content:space-between;gap:20px;padding:18px 22px;margin-bottom:20px;border:1px solid var(--border-color,#dbe3ee);border-radius:16px;background:linear-gradient(135deg,rgba(37,99,235,.08),rgba(14,165,233,.04))}.account-role-callout div{display:grid;gap:4px}.account-role-callout span{color:var(--text-muted,#64748b)}.seguridad-grid--password-only{display:block;max-width:720px}.seguridad-bloque--password{padding:8px 0}.resolution-comment{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:12px;width:100%;margin-top:14px;padding:14px;border:1px solid var(--border-color,#dbe3ee);border-radius:12px;background:var(--surface-subtle,#f8fafc)}.resolution-comment textarea{min-height:76px}.admin-dashboard{display:grid;gap:24px}.admin-hero{display:flex;align-items:flex-end;justify-content:space-between;gap:24px;padding:28px;border:1px solid var(--border-color,#dbe3ee);border-radius:20px;background:linear-gradient(135deg,rgba(37,99,235,.12),rgba(14,165,233,.03))}.admin-hero h1{margin:4px 0 8px;font-size:clamp(1.8rem,3vw,2.5rem)}.admin-hero p,.admin-card p{margin:0;color:var(--text-muted,#64748b)}.admin-hero__eyebrow,.admin-card__kicker{font-size:.75rem;font-weight:800;letter-spacing:.1em;text-transform:uppercase;color:#2563eb}.admin-grid{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:24px}.admin-grid--top{grid-template-columns:minmax(300px,.8fr) minmax(360px,1.2fr)}.admin-card{margin:0}.admin-card__heading{display:flex;align-items:flex-start;justify-content:space-between;gap:16px;margin-bottom:18px}.admin-card__heading h2{margin:4px 0 6px}.admin-form-grid{display:grid;grid-template-columns:minmax(0,1fr) auto;align-items:end;gap:20px;margin-bottom:18px}.admin-switch{display:flex;align-items:center;gap:10px;min-height:46px;font-weight:600}.admin-switch input{width:20px;height:20px}.admin-list{display:grid;gap:10px}.admin-list--columns{grid-template-columns:repeat(2,minmax(0,1fr))}.admin-row{display:flex;align-items:center;justify-content:space-between;gap:16px;padding:14px;border:1px solid var(--border-color,#dbe3ee);border-radius:12px;background:var(--surface-subtle,#f8fafc)}.admin-row>div:first-child{display:flex;align-items:center;flex-wrap:wrap;gap:7px}.admin-row p{flex-basis:100%;font-size:.9rem}.admin-row__actions{display:flex;align-items:center;justify-content:flex-end;gap:8px;flex-wrap:wrap}@media(max-width:850px){.admin-grid,.admin-grid--top,.admin-list--columns{grid-template-columns:1fr}.admin-hero,.account-role-callout{align-items:stretch;flex-direction:column}.admin-form-grid{grid-template-columns:1fr}.resolution-comment{grid-template-columns:1fr}}
+
+/* Coherencia de temas: Cuenta consume los tokens globales en ambos modos. */
+.account-redesign{background:var(--color-fondo-pagina);color:var(--color-texto-principal)}
+.account-redesign .barra-superior{background:var(--color-navbar-fondo);border-bottom-color:var(--color-borde-suave);color:var(--color-navbar-texto)}
+.account-redesign .barra-superior__link,.account-redesign .breadcrumb,.account-redesign .page-subtitle,.account-redesign .panel__subtitle,.account-redesign .upload-note,.account-redesign .seguridad-nota{color:var(--color-texto-secundario)}
+.account-redesign .barra-superior__link:hover,.account-redesign .barra-superior__link--active{background:var(--color-navbar-hover);color:var(--color-navbar-texto)}
+.account-redesign .page-header,.account-redesign .page-title,.account-redesign .panel__title,.account-redesign .profile-card__name,.account-redesign .profile-stat__value,.account-redesign .seguridad-bloque__titulo{color:var(--color-texto-principal)}
+.account-redesign .profile-card,.account-redesign .account-form-panel,.account-redesign .account-security-panel{background:var(--color-fondo-tarjeta);border-color:var(--color-borde-suave);box-shadow:var(--sombra-suave)}
+.account-redesign .profile-card__cover{background:linear-gradient(145deg,var(--color-primario) 0%,var(--color-fondo-tarjeta) 100%)}
+.account-redesign .profile-stat,.account-redesign .seguridad-bloque{background:var(--color-fondo-entrada);border-color:var(--color-borde-suave)}
+.account-redesign .profile-stat__label,.account-redesign .profile-card__role,.account-redesign .input-stack label{color:var(--color-texto-secundario)}
+.account-redesign .text-input,.account-redesign .textarea-input,.account-redesign .account-secret-input{background:var(--color-fondo-entrada);border-color:var(--color-borde-medio);color:var(--color-texto-principal)}
+.account-security-header{display:flex;align-items:flex-start;gap:14px}
+.account-security-icon{display:inline-flex;width:44px;height:44px;flex:0 0 44px;align-items:center;justify-content:center;border-radius:12px;background:var(--color-fondo-seleccionado);color:var(--color-primario)}
+.account-security-icon svg{width:22px;height:22px}
+.seguridad-grid--password-only{display:grid;max-width:none;grid-template-columns:minmax(0,1fr)}
+.seguridad-bloque--password{padding:22px}
+.seguridad-bloque--password .seguridad-form{grid-template-columns:repeat(3,minmax(0,1fr));align-items:end;gap:16px}
+.seguridad-bloque--password .boton{grid-column:1/-1;justify-self:end}
+
+/* Registro: el borde pertenece al control, no tambien a su contenedor. */
+.auth-view--register .auth-input-shell.regla-diseno-069{border:0;padding-inline:0}
+
+@media(max-width:900px){.seguridad-bloque--password .seguridad-form{grid-template-columns:1fr}.seguridad-bloque--password .boton{width:100%}}

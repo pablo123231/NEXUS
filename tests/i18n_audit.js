@@ -47,9 +47,14 @@ for (const pagina of ['index.html', 'login.html', 'register.html', 'recuperar.ht
 
 for (const pagina of fs.readdirSync(raiz).filter((nombre) => nombre.endsWith('.html') && nombre !== 'test-api.html')) {
   const contenido = fs.readFileSync(path.join(raiz, pagina), 'utf8');
+  exigir(contenido.includes('js/vendor/i18next-26.5.3.min.js'), `${pagina} no carga el motor i18next local.`);
   exigir(contenido.includes('js/traducciones.js'), `${pagina} no carga el diccionario.`);
   exigir(contenido.includes('js/core/ui.js'), `${pagina} no carga el núcleo de idioma.`);
 }
+
+exigir(fs.existsSync(path.join(raiz, 'js', 'vendor', 'i18next-26.5.3.min.js')), 'Falta la copia local y versionada de i18next.');
+exigir(traducciones.es.en_curso === 'En curso' && traducciones.en.en_curso === 'In progress', 'El estado En curso no es bilingüe.');
+exigir(traducciones.es.completado === 'Completado' && traducciones.en.completado === 'Completed', 'El estado Completado no es bilingüe.');
 
 exigir(traducciones.es.espanol === 'Español', 'El nombre Español debe conservar la ñ.');
 exigir(traducciones.es.contrasena === 'Contraseña', 'Contraseña debe conservar la ñ.');
